@@ -1,0 +1,10 @@
+function getDeckOrCard(zone)
+  if zone ~= nil then
+    for _, obj in ipairs(zone.getObjects()) do
+      if obj.tag == 'Card' or obj.tag == 'Deck' then
+        return obj
+      end
+    end
+  end
+  return nil
+end

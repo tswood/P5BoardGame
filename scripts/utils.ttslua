@@ -1,0 +1,28 @@
+function gameMessage(message)
+  print('#> ' .. message)
+end
+
+function deepcopy(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, orig, nil do
+            copy[deepcopy(orig_key)] = deepcopy(orig_value)
+        end
+        setmetatable(copy, deepcopy(getmetatable(orig)))
+    else -- number, string, boolean, etc
+        copy = orig
+    end
+    return copy
+end
+
+function merge(source, destination)
+  for k, v in pairs(source) do destination[k] = v end
+end
+
+function tableCount(currentTable)
+  local counter = 0
+  for k, v in pairs(currentTable) do counter = counter + 1 end
+  return counter
+end

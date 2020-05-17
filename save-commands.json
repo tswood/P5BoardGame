@@ -1,0 +1,5 @@
+{
+  "commands": [
+    "scripts/global.ttslua : copy {relFullPath} C:{sep}Users{sep}THEWOO~1{sep}AppData{sep}Local{sep}Temp{sep}TabletopSimulator{sep}Tablet~1{sep}Global.-1.ttslua"
+  ]
+}

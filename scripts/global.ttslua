@@ -1,0 +1,60 @@
+--[[ Lua code. See documentation: https://api.tabletopsimulator.com/ --]]
+#include !\P5BoardGame\scripts\guids
+#include !\P5BoardGame\scripts\constants
+#include !\P5BoardGame\scripts\utils
+#include !\P5BoardGame\scripts\zone_utils
+#include !\P5BoardGame\scripts\deck_utils
+#include !\P5BoardGame\scripts\ui
+#include !\P5BoardGame\scripts\save
+#include !\P5BoardGame\scripts\setup_player
+#include !\P5BoardGame\scripts\setup_palace
+
+-- Zone Ref's
+player_button_zone = nil
+player_cards_zone = nil
+palace_cards_zone = nil
+shadow_cards_zone = nil
+location_YYcards_zone = nil
+confidant_cards_zone = nil
+
+-- Game State Settings
+cache_key = '1234'
+settings = nil
+defaultSettings = {
+  players = {},
+  open_player_cards = {}
+}
+
+function onLoad(save_state)
+  registerZones()
+
+  if (processSaveState(save_state)) then
+    return
+  end
+
+  shuffleDecks()
+  initPlayerButtons()
+end
+
+function onSave()
+  if (settings == nil) then
+    return nil
+  end
+  settings.cache_key = cache_key
+  return JSON.encode(settings)
+end
+
+function registerZones()
+  player_button_zone = getObjectFromGUID(PLAYER_BUTTONS_GUID)
+  player_cards_zone = getObjectFromGUID(PLAYER_CARDS_GUID)
+  palace_cards_zone = getObjectFromGUID(PALACE_CARDS_GUID)
+  shadow_cards_zone = getObjectFromGUID(SHADOW_CARDS_GUID)
+  location_cards_zone = getObjectFromGUID(LOCATION_CARDS_GUID)
+  confidant_cards_zone = getObjectFromGUID(CONFIDANT_CARDS_GUID)
+end
+
+function shuffleDecks()
+  getDeckOrCard(shadow_cards_zone).shuffle()
+  getDeckOrCard(location_cards_zone).shuffle()
+  getDeckOrCard(confidant_cards_zone).shuffle()
+end

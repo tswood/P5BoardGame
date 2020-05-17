@@ -1,0 +1,12 @@
+function processSaveState(save_state)
+  if (save_state ~= nil and save_state ~= '') then
+    saved_settings = JSON.decode(save_state)
+    if (saved_settings.cache_key == cache_key) then
+      print('Loading state settings...')
+      log(saved_settings)
+      settings = saved_settings
+      return true
+    end
+  end
+  return false
+end

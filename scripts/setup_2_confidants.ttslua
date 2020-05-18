@@ -1,0 +1,19 @@
+function prepConfidantDeck()
+  gameMessage('Restructuring Confidants')
+
+  local confidants = getDeckOrCard(confidant_cards_zone)
+
+  for _, v in pairs(settings.players) do
+    local character_card = getObjectFromGUID(v.character_card_guid)
+    local note = character_card.getGMNotes()
+    local isJoker = note == JOKER_NAME
+    for _, c in pairs(confidants.getObjects()) do
+      if (c.gm_notes == JOKER_NAME and not isJoker) or
+          (c.gm_notes == note and not isJoker) then
+        trash_bag.putObject(confidants.takeObject({ guid = c.guid }))
+      end
+    end
+  end
+
+  confidants.shuffle()
+end

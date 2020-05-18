@@ -1,0 +1,45 @@
+function isContainerNotEmpty(container)
+  if (container.tag == 'Card') then
+    return true
+  end
+
+  for k, v in pairs(container.getObjects()) do
+    return true
+  end
+  return false
+end
+
+function isContainerEmpty(container)
+  if (container == nil) then
+    return true
+  end
+
+  for k, v in pairs(container.getObjects()) do
+    return false
+  end
+  return true
+end
+
+function getContainerCount(container)
+  local counter = 0
+  for k, v in pairs(container.getObjects()) do
+    counter = counter + 1
+  end
+  return counter
+end
+
+function getCardGuidViaNotes(container, note)
+  for _, v in pairs(container.getObjects()) do
+    if (v.gm_notes == note) then
+      return v.guid
+    end
+  end
+end
+
+function getCardIndexViaNotes(container, note)
+  for i, v in ipairs(container.getObjects()) do
+    if (v.gm_notes == note) then
+      return v.index or i
+    end
+  end
+end

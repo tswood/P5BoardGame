@@ -1,0 +1,61 @@
+function prepPlayerBoards()
+  gameMessage('Initializing Characters')
+  for k, v in pairs(settings.players) do
+    local card = getObjectFromGUID(v.character_card_guid)
+    initPlayerStats(k)
+    standardPrep(k)
+    uniquePrep(k, v.character_name, CHARACTER_DEF[v.character_name])
+    if (getPlayerCharacterName(k) == JOKER_NAME) then
+      jokerPrep()
+    end
+  end
+  return 1
+end
+
+function initPlayerStats(player_color)
+  local playerObj = getPlayerObject(player_color)
+  local cardPos = getPlayerCard(player_color).getPosition()
+  local statBaseDie = getObjectFromGUID(STAT_DIE_BASE_GUID)
+
+  playerObj.stats = {}
+
+  for k, v in pairs(STAT_DEF) do
+    local currentStatDie = statBaseDie.clone({
+      position = translateVector(cardPos, v.offset)
+    })
+    currentStatDie.setName(v.text)
+
+    wait_spawning(currentStatDie)
+
+    playerObj.stats[k] = { value = 1, die_guid = currentStatDie.getGUID() }
+  end
+end
+
+function standardPrep(player_color)
+  if (settings.player_number > 1) then
+    return
+  end
+
+  gameMessage('Applying Solo Bonus')
+
+  givePlayerToken(player_color, TOKEN_DEF.HP)
+  givePlayerToken(player_color, TOKEN_DEF.SP)
+  givePlayerToken(player_color, TOKEN_DEF.BULLET)
+  givePlayerToken(player_color, TOKEN_DEF.CASH)
+end
+
+function uniquePrep(player_color, char_name, char_def)
+  gameMessage('Applying ' .. char_name .. ' Passives')
+  for k, v in pairs(char_def.tokens) do
+    givePlayerToken(player_color, TOKEN_DEF[k], v)
+  end
+
+  gameMessage('Setting ' .. char_name .. ' Stats')
+  for k, v in pairs(char_def.stats) do
+    setPlayerStat(player_color, k, v)
+  end
+end
+
+function jokerPrep()
+  gameMessage('TODO: JOKER PREP!')
+end

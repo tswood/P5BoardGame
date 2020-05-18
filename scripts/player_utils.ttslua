@@ -1,0 +1,44 @@
+function getPlayerName(player_color)
+  return Player[player_color].steam_name
+end
+
+function getPlayerObject(player_color)
+  return settings.players[player_color]
+end
+
+function getPlayerCard(player_color)
+  return getObjectFromGUID(getPlayerObject(player_color).character_card_guid)
+end
+
+function getPlayerCharacterName(player_color)
+  return getPlayerObject(player_color).character_name
+end
+
+function givePlayerToken(player_color, token, quantity)
+  local cardPos = getPlayerCard(player_color).getPosition()
+  local sourceBag = getObjectFromGUID(token.source_guid)
+  quantity = quantity or 1
+
+  rotation = { 0, 180, 180 }
+
+  if (token.source_guid == INF_BAG_CASH_GUID) then
+    rotation = { 0, 180, 0 }
+  end
+
+  for i=1,quantity do
+    sourceBag.takeObject({
+      rotation = rotation,
+      position = translateVector(cardPos, token.offset)
+    })
+  end
+
+  gameMessage(getPlayerCharacterName(player_color) .. ' gained ' .. quantity .. ' ' .. token.text .. '!')
+end
+
+function getPlayerStatDie(player_color, stat)
+  return getObjectFromGUID(getPlayerObject(player_color).stats[stat].die_guid)
+end
+
+function setPlayerStat(player_color, stat, value)
+  getPlayerStatDie(player_color, stat).setValue(value)
+end

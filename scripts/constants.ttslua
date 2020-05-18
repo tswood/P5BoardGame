@@ -1,18 +1,6 @@
 -- Positions
-PLAYER_CARDS_POS_REF = {
-  [1] = PLAYER_1_CARD_GUID,
-  [2] = PLAYER_2_CARD_GUID
-}
-
--- Character Names
-JOKER_NAME = 'Joker'
-MONA_NAME = 'Mona'
-SKULL_NAME = 'Skull'
-PANTHER_NAME = 'Panther'
-FOX_NAME = 'Fox'
-QUEEN_NAME = 'Queen'
-NOIR_NAME = 'Noir'
-CROW_NAME = 'Crow'
+PLAYER_CARDS_POS_REF = { [1] = PLAYER_1_CARD_GUID, [2] = PLAYER_2_CARD_GUID }
+LOC_CARD_TOP_CENTER_POS = { x = 0, y = 1, z = 22 }
 
 -- Offsets
 PLAYER_CARD_INIT_DISPLAY_OFFSET = { x = -47.25, y = 1, z = 0 }
@@ -21,56 +9,160 @@ PLAYER_CARD_HP_DROP_OFFSET = { x = -9, y = 0.5, z = -9 }
 PLAYER_CARD_SP_DROP_OFFSET = { x = -3, y = 0.5, z = -9 }
 PLAYER_CARD_BULLET_DROP_OFFSET = { x = 3, y = 0.5, z = -9 }
 PLAYER_CARD_CASH_DROP_OFFSET = { x = 9, y = 0.5, z = -9 }
+PLAYER_CARD_CONFIDANT_DROP_OFFSET = { x = -15, y = 1, z = 0 }
+
+-- Character IDs
+ID = {
+  CHAR = {
+    JOKER = "JOKER",
+    MONA = 'MONA',
+    SKULL = 'SKULL',
+    PANTHER = 'PANTHER',
+    FOX = 'FOX',
+    QUEEN = 'QUEEN',
+    NOIR =  'NOIR',
+    CROW = 'CROW'
+  },
+  LOC = {
+    SHUJIN = 'SHUJIN',
+    LEBLANC = 'LEBLANC',
+    CLINIC = 'CLINIC',
+    AIRSOFT = 'AIRSOFT',
+    STORE = 'STORE'
+  },
+  TOKEN = {
+    HP = 'HP',
+    SP = 'SP',
+    BULLET = 'BULLET',
+    CASH = 'CASH'
+  },
+  STAT = {
+    INT = 'INT',
+    GUT = 'GUT',
+    PRO = 'PRO',
+    KND = 'KND',
+    CHM = 'CHM'
+  }
+}
+
+-- Names
+NAME = {
+  CHAR = {
+    [ID.CHAR.JOKER] = 'Joker',
+    [ID.CHAR.MONA] = 'Mona',
+    [ID.CHAR.SKULL] = 'Skull',
+    [ID.CHAR.PANTHER] = 'Panther',
+    [ID.CHAR.FOX] = 'Fox',
+    [ID.CHAR.QUEEN] = 'Queen',
+    [ID.CHAR.NOIR] = 'Noir',
+    [ID.CHAR.CROW] = 'Crow'
+  },
+  LOC = {
+    [ID.LOC.SHUJIN] = 'Shujin Academy',
+    [ID.LOC.LEBLANC] = 'Cafe Leblanc',
+    [ID.LOC.CLINIC] = 'Takemi Medical',
+    [ID.LOC.AIRSOFT] = 'Untouchable Airsoft Shop',
+    [ID.LOC.STORE] = 'Convenience Store'
+  }
+}
 
 -- Token Definitions
 TOKEN_DEF = {
-  HP = { text = "HP", offset = PLAYER_CARD_HP_DROP_OFFSET, source_guid = INF_BAG_HP_GUID },
-  SP = { text = "SP", offset = PLAYER_CARD_SP_DROP_OFFSET, source_guid = INF_BAG_SP_GUID },
-  BULLET = { text = "Bullet(s)", offset = PLAYER_CARD_BULLET_DROP_OFFSET, source_guid = INF_BAG_BULLET_GUID },
-  CASH = { text = "Cash", offset = PLAYER_CARD_CASH_DROP_OFFSET, source_guid = INF_BAG_CASH_GUID }
+  [ID.TOKEN.HP] = { text = "HP", offset = PLAYER_CARD_HP_DROP_OFFSET, source_guid = INF_BAG_HP_GUID },
+  [ID.TOKEN.SP] = { text = "SP", offset = PLAYER_CARD_SP_DROP_OFFSET, source_guid = INF_BAG_SP_GUID },
+  [ID.TOKEN.BULLET] = { text = "Bullet(s)", offset = PLAYER_CARD_BULLET_DROP_OFFSET, source_guid = INF_BAG_BULLET_GUID },
+  [ID.TOKEN.CASH] = { text = "Cash", offset = PLAYER_CARD_CASH_DROP_OFFSET, source_guid = INF_BAG_CASH_GUID }
 }
 
 -- Stat Definitions
 STAT_DEF = {
-  INT = { text = "Intelligence", offset = { x = 8.5, y = 0.15, z = 0.6 } },
-  GUT = { text = "Guts", offset = { x = 9.8, y = 0.15, z = -1.8 } },
-  PRO = { text = "Proficency", offset = { x = 7.9, y = 0.15, z = -5 } },
-  KND = { text = "Kindness", offset = { x = 1.3, y = 0.15, z = -3.8 } },
-  CHR = { text = "Charm", offset = { x = 1.1, y = 0.15, z = -0.7 } }
+  [ID.STAT.INT] = { text = "Intelligence", offset = { x = 8.5, y = 0.15, z = 0.6 } },
+  [ID.STAT.GUT] = { text = "Guts", offset = { x = 9.8, y = 0.15, z = -1.8 } },
+  [ID.STAT.PRO] = { text = "Proficency", offset = { x = 7.9, y = 0.15, z = -5 } },
+  [ID.STAT.KND] = { text = "Kindness", offset = { x = 1.3, y = 0.15, z = -3.8 } },
+  [ID.STAT.CHM] = { text = "Charm", offset = { x = 1.1, y = 0.15, z = -0.7 } }
 }
 
 -- Character Token/Stat Definitions
 CHARACTER_DEF = {
-  [JOKER_NAME] = {
+  [ID.CHAR.JOKER] = {
     tokens = {},
-    stats = { INT = 2, GUT = 2, PRO = 2, KND = 2, CHR = 2 }
+    stats = {
+      [ID.STAT.INT] = 2,
+      [ID.STAT.GUT] = 2,
+      [ID.STAT.PRO] = 2,
+      [ID.STAT.KND] = 2,
+      [ID.STAT.CHM] = 2
+    }
   },
-  [MONA_NAME] = {
-    tokens = { SP = 2 },
-    stats = { INT = 2, GUT = 3, PRO = 3, KND = 1, CHR = 1 }
+  [ID.CHAR.MONA] = {
+    tokens = { [ID.TOKEN.SP] = 2 },
+    stats = {
+      [ID.STAT.INT] = 2,
+      [ID.STAT.GUT] = 3,
+      [ID.STAT.PRO] = 3,
+      [ID.STAT.KND] = 1,
+      [ID.STAT.CHM] = 1
+    }
   },
-  [SKULL_NAME] = {
-    tokens = { HP = 2 },
-    stats = { INT = 1, GUT = 4, PRO = 1, KND = 3, CHR = 1 }
+  [ID.CHAR.SKULL] = {
+    tokens = { [ID.TOKEN.HP] = 2 },
+    stats = {
+      [ID.STAT.INT] = 1,
+      [ID.STAT.GUT] = 4,
+      [ID.STAT.PRO] = 1,
+      [ID.STAT.KND] = 3,
+      [ID.STAT.CHM] = 1
+    }
   },
-  [PANTHER_NAME] = {
-    tokens = { SP = 2 },
-    stats = { INT = 1, GUT = 1, PRO = 2, KND = 2, CHR = 4 }
+  [ID.CHAR.PANTHER] = {
+    tokens = { [ID.TOKEN.SP] = 2 },
+    stats = {
+      [ID.STAT.INT] = 1,
+      [ID.STAT.GUT] = 1,
+      [ID.STAT.PRO] = 2,
+      [ID.STAT.KND] = 2,
+      [ID.STAT.CHM] = 4
+    }
   },
-  [FOX_NAME] = {
+  [ID.CHAR.FOX] = {
     tokens = {},
-    stats = { INT = 2, GUT = 1, PRO = 4, KND = 1, CHR = 2 }
+    stats = {
+      [ID.STAT.INT] = 2,
+      [ID.STAT.GUT] = 1,
+      [ID.STAT.PRO] = 4,
+      [ID.STAT.KND] = 1,
+      [ID.STAT.CHM] = 2
+    }
   },
-  [QUEEN_NAME] = {
+  [ID.CHAR.QUEEN] = {
     tokens = {},
-    stats = { INT = 3, GUT = 3, PRO = 2, KND = 2, CHR = 1 }
+    stats = {
+      [ID.STAT.INT] = 3,
+      [ID.STAT.GUT] = 3,
+      [ID.STAT.PRO] = 2,
+      [ID.STAT.KND] = 2,
+      [ID.STAT.CHM] = 1
+    }
   },
-  [NOIR_NAME] = {
-    tokens = { BULLET = 2 },
-    stats = { INT = 1, GUT = 3, PRO = 1, KND = 4, CHR = 2 }
+  [ID.CHAR.NOIR] = {
+    tokens = { [ID.TOKEN.BULLET] = 2 },
+    stats = {
+      [ID.STAT.INT] = 1,
+      [ID.STAT.GUT] = 3,
+      [ID.STAT.PRO] = 1,
+      [ID.STAT.KND] = 4,
+      [ID.STAT.CHM] = 2
+    }
   },
-  [CROW_NAME] =  {
+  [ID.CHAR.CROW] =  {
     tokens = {},
-    stats = { INT = 3, GUT = 2, PRO = 2, KND = 1, CHR = 2 }
+    stats = {
+      [ID.STAT.INT] = 3,
+      [ID.STAT.GUT] = 2,
+      [ID.STAT.PRO] = 2,
+      [ID.STAT.KND] = 1,
+      [ID.STAT.CHM] = 2
+    }
   }
 }

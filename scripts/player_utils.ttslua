@@ -14,25 +14,31 @@ function getPlayerCharacterName(player_color)
   return getPlayerObject(player_color).character_name
 end
 
-function givePlayerToken(player_color, token, quantity)
+function givePlayerToken(player_color, token_id, quantity)
+  local token = TOKEN_DEF[token_id]
+  local playerTokens = getPlayerObject(player_color).tokens
   local cardPos = getPlayerCard(player_color).getPosition()
   local sourceBag = getObjectFromGUID(token.source_guid)
-  quantity = quantity or 1
 
-  rotation = { 0, 180, 180 }
-
-  if (token.source_guid == INF_BAG_CASH_GUID) then
+  local rotation = { 0, 180, 180 }
+  if (token_id == ID.TOKEN.CASH) then
     rotation = { 0, 180, 0 }
   end
 
-  for i=1,quantity do
-    sourceBag.takeObject({
+  if playerTokens[token_id] == nil then
+    playerTokens[token_id] = 0
+  end
+
+  for i=1,(quantity or 1) do
+    playerTokens[token_id] = playerTokens[token_id] + 1
+    local newToken = sourceBag.takeObject({
       rotation = rotation,
       position = translateVector(cardPos, token.offset)
     })
+    wait_spawning(newToken)
   end
 
-  gameMessage(getPlayerCharacterName(player_color) .. ' gained ' .. quantity .. ' ' .. token.text .. '!')
+  gameMessage(getPlayerCharacterName(player_color) .. ' gained ' .. (quantity or 1) .. ' ' .. token.text .. '!')
 end
 
 function getPlayerStatDie(player_color, stat)

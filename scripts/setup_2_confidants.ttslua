@@ -1,19 +1,53 @@
 function prepConfidantDeck()
   gameMessage('Restructuring Confidants')
 
+  wait_sec(0.75)
+
   local confidants = getDeckOrCard(confidant_cards_zone)
+  local takeOffset = { x = 0, y = 0, z = 0 }
 
   for _, v in pairs(settings.players) do
     local character_card = getObjectFromGUID(v.character_card_guid)
-    local note = character_card.getGMNotes()
-    local isJoker = note == JOKER_NAME
+    local character_id = v.character_id
+    local isJoker = character_id == ID.CHAR.JOKER
     for _, c in pairs(confidants.getObjects()) do
-      if (c.gm_notes == JOKER_NAME and not isJoker) or
-          (c.gm_notes == note and not isJoker) then
+      local confidantNote = c.gm_notes
+      if confidantNote == character_id and not isJoker then
         trash_bag.putObject(confidants.takeObject({ guid = c.guid }))
+      end
+
+      if (confidantNote == ID.CHAR.JOKER and isJoker) then
+        local targetOffset = translateVector({ x = 0, y = 0, z = 0 }, PLAYER_CARD_CONFIDANT_DROP_OFFSET)
+
+        if (v.player_number == 2) then
+          targetOffset.x = targetOffset.x * -1
+        end
+
+        local currentConfidant = confidants.takeObject({
+          guid = c.guid,
+          flip = true,
+          position = translateVector(translateVector(character_card.getPosition(), targetOffset), takeOffset)
+        })
+
+        if (v.player_number == 1) then
+          takeOffset.x = takeOffset.x - 1.5
+          takeOffset.z = takeOffset.z - 1.5
+        else
+          takeOffset.x = takeOffset.x + 1.5
+          takeOffset.z = takeOffset.z + 1.5
+        end
+
+        wait_spawning(currentConfidant)
       end
     end
   end
 
+  for _, c in pairs(confidants.getObjects()) do
+    if c.gm_notes == ID.CHAR.JOKER then
+      trash_bag.putObject(confidants.takeObject({ guid = c.guid }))
+    end
+  end
+
   confidants.shuffle()
+  return 1
 end

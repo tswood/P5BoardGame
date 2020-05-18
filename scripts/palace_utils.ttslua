@@ -1,0 +1,6 @@
+function revealShadows(quantity)
+  local palace_cover = getObjectFromGUID(PALACE_COVER_GUID)
+  local shadows = getDeckOrCard(shadow_cards_zone)
+
+  
+end

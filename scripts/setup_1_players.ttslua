@@ -55,7 +55,7 @@ function initPlayerCardButtons()
 
     local cardNote = card.getGMNotes()
     card.createButton(getBasicPlayerButtonParams({
-      label = cardNote,
+      label = NAME.CHAR[cardNote],
       click_function = 'setPlayerCharacter',
       rotation = { 0, 0, 180 },
       position = { 0, -0.25, 1.75 }
@@ -71,7 +71,8 @@ function initPlayerCardButtons()
 end
 
 function setPlayerCharacter(obj, player_clicker_color)
-  local selectedCharacter = obj.getGMNotes()
+  local cardNote = obj.getGMNotes()
+  local characterName = NAME.CHAR[cardNote]
   local alreadySetupPlayers = tableCount(settings.players)
   local playerName = getPlayerName(player_clicker_color)
 
@@ -79,27 +80,34 @@ function setPlayerCharacter(obj, player_clicker_color)
     return
   end
 
+  local destination = getObjectFromGUID(PLAYER_CARDS_POS_REF[alreadySetupPlayers + 1]).getPosition()
+
+  destination.y = 1.5
+
   obj.clearButtons()
   obj.setRotationSmooth({ 0, -90, 0 }, false, true)
-  obj.setPositionSmooth(getObjectFromGUID(PLAYER_CARDS_POS_REF[alreadySetupPlayers + 1]).getPosition(), false, true)
+  obj.setPositionSmooth(destination, false, true)
+  obj.setLock(true)
   obj.sticky = true
 
   settings.players[player_clicker_color] = {
-    character_name = selectedCharacter,
-    character_card_guid = obj.getGUID()
+    character_id = cardNote,
+    character_name = characterName,
+    character_card_guid = obj.getGUID(),
+    player_number = alreadySetupPlayers + 1
   }
 
-  settings.open_player_cards[selectedCharacter] = nil
+  settings.open_player_cards[cardNote] = nil
 
   alreadySetupPlayers = alreadySetupPlayers + 1
 
-  gameMessage(playerName .. ' donned the mask of ' .. selectedCharacter)
+  gameMessage(playerName .. ' donned the mask of ' .. characterName)
 
   if (settings.player_number ~= alreadySetupPlayers) then
     gameMessage('Player ' .. alreadySetupPlayers + 1 .. ' Character Select')
   else
     cleanupPlayerCards()
-    prepConfidantDeck()
+    startLuaCoroutine(Global, 'prepConfidantDeck')
     initPalaceButtons()
   end
 end

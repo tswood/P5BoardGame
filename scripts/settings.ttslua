@@ -1,0 +1,22 @@
+Settings = {
+  _current_settings = nil,
+  _default_settings = {
+    player_count = 0,
+    players = {},
+    open_player_cards = {}
+  }
+}
+
+function Settings:init()
+  self._current_settings = Util:deepcopy(self._default_settings)
+  return self
+end
+
+function Settings:setPlayerCount(count)
+  self._current_settings.player_count = count
+  return self
+end
+
+function Settings:getPlayerCount()
+  return self._current_settings.player_count
+end

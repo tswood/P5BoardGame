@@ -1,0 +1,32 @@
+Confidant = {
+  deck_zone = nil
+}
+
+function Confidant:getDeckZone()
+  if deck_zone == nil then
+    deck_zone = getObjectFromGUID(CONFIDANT_CARDS_GUID)
+  end
+  return deck_zone
+end
+
+function Confidant:getDeck()
+  return Zone:getDeckOrCard(self:getDeckZone())
+end
+
+function Confidant:takeFromDeck(character_id)
+  local deck = self:getDeck()
+  for i, v in ipairs(deck.getObjects()) do
+    if v.gm_notes == character_id then
+      return deck.takeObject({ index = i - 1 })
+    end
+  end
+  return nil
+end
+
+function Confidant:removeFromDeck(character_id)
+  local itemToRemove = self:takeFromDeck(character_id)
+  if itemToRemove ~= nil then
+      trash_bag.putObject(itemToRemove)
+  end
+  return itemToRemove
+end

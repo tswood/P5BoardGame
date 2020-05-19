@@ -1,0 +1,69 @@
+Setup = {}
+
+function Setup:init()
+  for _, v in ipairs(Board:getPlayerButtonZones()) do
+    self:populateZoneForPlayerModeSelection(v)
+  end
+end
+
+function Setup:populateZoneForPlayerModeSelection(zone_obj)
+  local button_pos = vector(0, -0.25, 0.35)
+  Button:addTo(zone_obj, {
+    label = 'One Player',
+    click_function = '_setup_setOnePlayerMode',
+    function_owner = nil,
+    position = button_pos
+  })
+
+  Button:addTo(zone_obj, {
+    label = 'Two Player',
+    click_function = '_setup_setTwoPlayerMode',
+    function_owner = nil,
+    position = button_pos:sub(vector(0, 0, 0.3))
+  })
+end
+
+function _setup_setOnePlayerMode()
+  Message:game_notice('One Player Mode')
+  Setup:setPlayers(1)
+end
+
+function _setup_setTwoPlayerMode()
+  Message:game_notice('Two Player Mode')
+  Setup:setPlayers(2)
+end
+
+function Setup:setPlayers(player_count)
+  Board:clearPlayerButtons()
+  Settings:init():setPlayerCount(player_count)
+  startLuaCoroutine(Global, '_setup_populateCharacterChoices')
+end
+
+function _setup_populateCharacterChoices()
+  local counter = 0
+  while (Container:isNotEmpty(player_card_bag)) do
+    local card = player_card_bag.takeObject({
+      position = PLAYER_CARD_INIT_DISPLAY_OFFSET +
+                 PLAYER_CARD_INIT_DISPLAY_PADDING * counter
+    })
+
+    card.setRotationSmooth(vector(0, 180, 180), false, true)
+
+    local character_id = card.getGMNotes()
+    Button:addTo(card, {
+      label = NAME.CHAR[character_id],
+      click_function = '_setup_setPlayerCharacter',
+      rotation = vector(0, 0, 180),
+      position = PLAYER_CARD_INIT_BUTTON_OFFSET
+    })
+
+    Util:wait_spawning(card)
+    counter = counter + 1
+  end
+
+  Message:game_notice('Player 1 Character Select')
+  return 1
+end
+
+function _setup_setPlayerCharacter(card_obj, player_color)
+end

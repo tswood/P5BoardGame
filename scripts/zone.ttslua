@@ -1,4 +1,6 @@
-function getDeckOrCard(zone)
+Zone = {}
+
+function Zone:getDeckOrCard(zone)
   if zone ~= nil then
     for _, obj in ipairs(zone.getObjects()) do
       if obj.tag == 'Card' or obj.tag == 'Deck' then

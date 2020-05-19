@@ -1,69 +1,30 @@
-function initPlayerButtons()
-  createPlayerSelectionButtonsInZone(player_1_button_zone)
-  createPlayerSelectionButtonsInZone(player_2_button_zone)
-  gameMessage('Select Player Mode')
-  return 1
-end
-
-function createPlayerSelectionButtonsInZone(zone)
-  zone.createButton(getBasicPlayerButtonParams({
-    label = 'One Player',
-    click_function = 'setPlayersToOne',
-    position = { 0, -0.25, 0.35 }
-  }))
-
-  zone.createButton(getBasicPlayerButtonParams({
-    label = 'Two Player',
-    click_function = 'setPlayersToTwo',
-    position = { 0, -0.25, 0.05 }
-  }))
-end
-
-function setPlayersToOne()
-  gameMessage('One Player Mode')
-  setupPlayers(1)
-end
-
-function setPlayersToTwo()
-  gameMessage('Two Player Mode')
-  setupPlayers(2)
-end
 
 function setupPlayers(player_number)
-  player_1_button_zone.clearButtons()
-  player_2_button_zone.clearButtons()
-
-  settings = deepcopy(defaultSettings)
-  settings.player_number = player_number
-
   startLuaCoroutine(Global, 'initPlayerCardButtons')
 end
 
 function initPlayerCardButtons()
-  local card_x_padding = 0
+  local counter = 0
   while (isContainerNotEmpty(player_card_bag)) do
-    local destination = translateVector({ x = 0, y = 0, z = 0 }, PLAYER_CARD_INIT_DISPLAY_OFFSET)
-    destination.x = destination.x + card_x_padding
-
     local card = player_card_bag.takeObject({
-      position = destination
+      position = PLAYER_CARD_INIT_DISPLAY_OFFSET +
+                 PLAYER_CARD_INIT_DISPLAY_PADDING * counter
     })
 
-    card.setRotationSmooth({ 0, 180, 180 }, false, true)
+    card.setRotationSmooth(vector(0, 180, 180), false, true)
 
-    card_x_padding = card_x_padding + PLAYER_CARD_INIT_DISPLAY_PADDING
-
-    local cardNote = card.getGMNotes()
+    local character_id = card.getGMNotes()
     card.createButton(getBasicPlayerButtonParams({
-      label = NAME.CHAR[cardNote],
+      label = NAME.CHAR[character_id],
       click_function = 'setPlayerCharacter',
-      rotation = { 0, 0, 180 },
-      position = { 0, -0.25, 1.75 }
+      rotation = vector(0, 0, 180),
+      position = PLAYER_CARD_INIT_BUTTON_OFFSET
     }))
 
     wait_spawning(card)
 
-    settings.open_player_cards[cardNote] = card.getGUID()
+    settings.open_player_cards[character_id] = card.getGUID()
+    counter = counter + 1
   end
 
   gameMessage('Player 1 Character Select')
@@ -71,8 +32,8 @@ function initPlayerCardButtons()
 end
 
 function setPlayerCharacter(obj, player_clicker_color)
-  local cardNote = obj.getGMNotes()
-  local characterName = NAME.CHAR[cardNote]
+  local character_id = obj.getGMNotes()
+  local character_name = NAME.CHAR[character_id]
   local alreadySetupPlayers = tableCount(settings.players)
   local playerName = getPlayerName(player_clicker_color)
 
@@ -80,28 +41,27 @@ function setPlayerCharacter(obj, player_clicker_color)
     return
   end
 
-  local destination = getObjectFromGUID(PLAYER_CARDS_POS_REF[alreadySetupPlayers + 1]).getPosition()
-
-  destination.y = 1.5
-
   obj.clearButtons()
-  obj.setRotationSmooth({ 0, -90, 0 }, false, true)
-  obj.setPositionSmooth(destination, false, true)
-  obj.setLock(true)
+  obj.setRotationSmooth(vector(0, -90, 0), false, true)
+  obj.setPositionSmooth(getObjectFromGUID(PLAYER_CARDS_POS_REF[alreadySetupPlayers + 1]).getPosition(), false, true)
   obj.sticky = true
 
   settings.players[player_clicker_color] = {
-    character_id = cardNote,
-    character_name = characterName,
+    character_id = character_id,
+    character_name = character_name,
     character_card_guid = obj.getGUID(),
     player_number = alreadySetupPlayers + 1
   }
 
-  settings.open_player_cards[cardNote] = nil
+  settings.open_player_cards[character_id] = nil
 
   alreadySetupPlayers = alreadySetupPlayers + 1
 
-  gameMessage(playerName .. ' donned the mask of ' .. characterName)
+  gameMessage(playerName .. ' donned the mask of ' .. character_name)
+
+  if character_id ~= ID.CHAR.JOKER then
+    while Confidant:removeFromDeck(character_id) ~= nil do end
+  end
 
   if (settings.player_number ~= alreadySetupPlayers) then
     gameMessage('Player ' .. alreadySetupPlayers + 1 .. ' Character Select')

@@ -1,23 +1,20 @@
 --[[ Lua code. See documentation: https://api.tabletopsimulator.com/ --]]
-#include !\P5BoardGame\scripts\guids
-#include !\P5BoardGame\scripts\constants
-#include !\P5BoardGame\scripts\utils
-#include !\P5BoardGame\scripts\player_utils
-#include !\P5BoardGame\scripts\zone_utils
-#include !\P5BoardGame\scripts\container_utils
-#include !\P5BoardGame\scripts\ui
+#include !\P5BoardGame\scripts\_guids
+#include !\P5BoardGame\scripts\_constants
+#include !\P5BoardGame\scripts\util
+#include !\P5BoardGame\scripts\message
+#include !\P5BoardGame\scripts\container
+#include !\P5BoardGame\scripts\zone
+#include !\P5BoardGame\scripts\button
+#include !\P5BoardGame\scripts\board
+#include !\P5BoardGame\scripts\settings
 #include !\P5BoardGame\scripts\save
-#include !\P5BoardGame\scripts\setup_1_players
+#include !\P5BoardGame\scripts\setup
+#include !\P5BoardGame\scripts\player_utils
+#include !\P5BoardGame\scripts\confidant
 #include !\P5BoardGame\scripts\setup_2_confidants
 #include !\P5BoardGame\scripts\setup_3_palaces
 #include !\P5BoardGame\scripts\setup_4_boardprep
-
--- Zone Ref's
-player_1_button_zone = nil
-player_2_button_zone = nil
-shadow_cards_zone = nil
-location_cards_zone = nil
-confidant_cards_zone = nil
 
 -- Bag Ref's
 inf_hp_bag = nil
@@ -37,31 +34,22 @@ defaultSettings = {
 }
 
 function onLoad(save_state)
-  registerZones()
   registerBags()
 
   if (processSaveState(save_state)) then
     return
   end
 
-  startLuaCoroutine(Global, 'initPlayerButtons')
+  Setup:init()
 end
 
 function onSave()
   return nil
-  if (settings == nil) then
-    return nil
-  end
-  settings.cache_key = cache_key
-  return JSON.encode(settings)
-end
-
-function registerZones()
-  player_1_button_zone = getObjectFromGUID(PLAYER_1_BUTTONS_GUID)
-  player_2_button_zone = getObjectFromGUID(PLAYER_2_BUTTONS_GUID)
-  shadow_cards_zone = getObjectFromGUID(SHADOW_CARDS_GUID)
-  location_cards_zone = getObjectFromGUID(LOCATION_CARDS_GUID)
-  confidant_cards_zone = getObjectFromGUID(CONFIDANT_CARDS_GUID)
+  --if (settings == nil) then
+  --  return nil
+  --end
+  --settings.cache_key = cache_key
+  --return JSON.encode(settings)
 end
 
 function registerBags()

@@ -1,0 +1,31 @@
+Board = {
+  _player_1_button_zone = nil,
+  _player_2_button_zone = nil
+}
+
+function Board:getPlayerOneButtonZone()
+  if (_player_1_button_zone == nil) then
+    _player_1_button_zone = getObjectFromGUID(PLAYER_1_BUTTONS_GUID)
+  end
+  return _player_1_button_zone
+end
+
+function Board:getPlayerTwoButtonZone()
+  if (_player_2_button_zone == nil) then
+    _player_2_button_zone = getObjectFromGUID(PLAYER_2_BUTTONS_GUID)
+  end
+  return _player_2_button_zone
+end
+
+function Board:getPlayerButtonZones()
+  return {
+    [1] = self:getPlayerOneButtonZone(),
+    [2] = self:getPlayerTwoButtonZone()
+  }
+end
+
+function Board:clearPlayerButtons()
+  for _, v in ipairs(self:getPlayerButtonZones()) do
+    v.clearButtons()
+  end
+end

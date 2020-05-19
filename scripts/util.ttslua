@@ -1,0 +1,37 @@
+Util = {}
+
+function Util:merge(source, destination)
+  for k, v in pairs(source) do destination[k] = v end
+  return destination
+end
+
+function Util:deepcopy(orig)
+  local orig_type = type(orig)
+  local copy
+  if orig_type == 'table' then
+    copy = {}
+    for orig_key, orig_value in next, orig, nil do
+      copy[self:deepcopy(orig_key)] = self:deepcopy(orig_value)
+    end
+    setmetatable(copy, self:deepcopy(getmetatable(orig)))
+  else -- number, string, boolean, etc
+    copy = orig
+  end
+  return copy
+end
+
+function Util:wait_frame(frames)
+  for i = 1, frames do
+    coroutine.yield(0)
+  end
+end
+
+function Util:wait_spawning(control)
+  while control.spawning do coroutine.yield(0) end
+end
+
+function Util:wait_sec(time_delay)
+  delay_time = delay_time or 1
+  local start = os.time()
+  repeat coroutine.yield(0) until os.time() > start + delay_time
+end

@@ -1,0 +1,5 @@
+Message = {}
+
+function Message:game_notice(message)
+  printToAll('#> ' .. message .. ' <#')
+end

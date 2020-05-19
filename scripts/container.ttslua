@@ -1,9 +1,11 @@
-function isContainerNotEmpty(container)
-  if (container.tag == 'Card') then
+Container = {}
+
+function Container:isNotEmpty(container_obj)
+  if (container_obj.tag == 'Card') then
     return true
   end
 
-  for k, v in pairs(container.getObjects()) do
+  for k, v in pairs(container_obj.getObjects()) do
     return true
   end
   return false

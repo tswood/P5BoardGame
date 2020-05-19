@@ -3,15 +3,18 @@ PLAYER_CARDS_POS_REF = { [1] = PLAYER_1_CARD_GUID, [2] = PLAYER_2_CARD_GUID }
 LOC_CARD_TOP_CENTER_POS = { x = 0, y = 1, z = 22 }
 
 -- Offsets
-PLAYER_CARD_INIT_DISPLAY_OFFSET = { x = -47.25, y = 1, z = 0 }
-PLAYER_CARD_INIT_DISPLAY_PADDING = 13.5
-PLAYER_CARD_HP_DROP_OFFSET = { x = -9, y = 0.5, z = -9 }
-PLAYER_CARD_SP_DROP_OFFSET = { x = -3, y = 0.5, z = -9 }
-PLAYER_CARD_BULLET_DROP_OFFSET = { x = 3, y = 0.5, z = -9 }
-PLAYER_CARD_CASH_DROP_OFFSET = { x = 9, y = 0.5, z = -9 }
-PLAYER_CARD_CONFIDANT_DROP_OFFSET = { x = -15, y = 1, z = 0 }
+PLAYER_CARD_INIT_DISPLAY_OFFSET = vector(-47.25, 1, 0)
+PLAYER_CARD_INIT_DISPLAY_PADDING = vector(13.5, 0, 0)
+PLAYER_CARD_INIT_BUTTON_OFFSET = vector(0, -0.25, 1.75)
+PLAYER_CARD_HP_DROP_OFFSET = vector(-9, 0.5, -9)
+PLAYER_CARD_SP_DROP_OFFSET = vector(-3, 0.5, -9)
+PLAYER_CARD_BULLET_DROP_OFFSET = vector(3, 0.5, -9)
+PLAYER_CARD_CASH_DROP_OFFSET = vector(9, 0.5, -9)
+PLAYER_CARD_CONFIDANT_DROP_OFFSET = vector(-15, 0.5, 0)
+PLAYER_CARD_CONFIDANT_DROP_PADDING_OFFSET = vector(1.5, 0, 1.5)
+PALACE_COVER_SHADOW_DROP_OFFSET = vector(3, 1, -5)
 
--- Character IDs
+-- IDs
 ID = {
   CHAR = {
     JOKER = "JOKER",
@@ -76,11 +79,11 @@ TOKEN_DEF = {
 
 -- Stat Definitions
 STAT_DEF = {
-  [ID.STAT.INT] = { text = "Intelligence", offset = { x = 8.5, y = 0.15, z = 0.6 } },
-  [ID.STAT.GUT] = { text = "Guts", offset = { x = 9.8, y = 0.15, z = -1.8 } },
-  [ID.STAT.PRO] = { text = "Proficency", offset = { x = 7.9, y = 0.15, z = -5 } },
-  [ID.STAT.KND] = { text = "Kindness", offset = { x = 1.3, y = 0.15, z = -3.8 } },
-  [ID.STAT.CHM] = { text = "Charm", offset = { x = 1.1, y = 0.15, z = -0.7 } }
+  [ID.STAT.INT] = { text = "Intelligence", offset = vector(8.5, 0.15, 0.6) },
+  [ID.STAT.GUT] = { text = "Guts", offset = vector(9.8, 0.15, -1.8) },
+  [ID.STAT.PRO] = { text = "Proficency", offset = vector(7.9, 0.15, -5) },
+  [ID.STAT.KND] = { text = "Kindness", offset = vector(1.3, 0.15, -3.8) },
+  [ID.STAT.CHM] = { text = "Charm", offset = vector(1.1, 0.15, -0.7) }
 }
 
 -- Character Token/Stat Definitions

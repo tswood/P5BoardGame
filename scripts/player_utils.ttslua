@@ -20,9 +20,9 @@ function givePlayerToken(player_color, token_id, quantity)
   local cardPos = getPlayerCard(player_color).getPosition()
   local sourceBag = getObjectFromGUID(token.source_guid)
 
-  local rotation = { 0, 180, 180 }
+  local rotation = vector(0, 180, 180)
   if (token_id == ID.TOKEN.CASH) then
-    rotation = { 0, 180, 0 }
+    rotation.z = 0
   end
 
   if playerTokens[token_id] == nil then
@@ -33,7 +33,7 @@ function givePlayerToken(player_color, token_id, quantity)
     playerTokens[token_id] = playerTokens[token_id] + 1
     local newToken = sourceBag.takeObject({
       rotation = rotation,
-      position = translateVector(cardPos, token.offset)
+      position = cardPos + token.offset
     })
     wait_spawning(newToken)
   end

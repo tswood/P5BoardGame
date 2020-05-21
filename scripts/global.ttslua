@@ -13,10 +13,32 @@
 #include <!\P5BoardGame\scripts\palace>
 #include <!\P5BoardGame\scripts\setup>
 
+local cache_key = 'jniadnf95d0f'
+
 function onLoad(save_state)
+  if (processSaveState(save_state)) then
+    return
+  end
   Setup:initPlayerChoice()
 end
 
 function onSave()
+  if Settings._current_settings ~= nil then
+    return JSON.encode({
+      cache_key = cache_key,
+      settings = Settings._current_settings
+    })
+  end
   return nil
+end
+
+function processSaveState(save_state)
+  if (save_state ~= nil and save_state ~= '') then
+    local restored_settings = JSON.decode(save_state)
+    if (restored_settings.cache_key == cache_key) then
+      Settings._current_settings = restored_settings.settings
+      return true
+    end
+  end
+  return false
 end

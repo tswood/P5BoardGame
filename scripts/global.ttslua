@@ -5,11 +5,12 @@
 #include <!\P5BoardGame\scripts\board>
 #include <!\P5BoardGame\scripts\message>
 #include <!\P5BoardGame\scripts\button>
+#include <!\P5BoardGame\scripts\calendar>
 #include <!\P5BoardGame\scripts\settings>
 #include <!\P5BoardGame\scripts\bags>
 #include <!\P5BoardGame\scripts\zone>
 #include <!\P5BoardGame\scripts\locations>
-#include <!\P5BoardGame\scripts\confidant>
+#include <!\P5BoardGame\scripts\confidants>
 #include <!\P5BoardGame\scripts\palace>
 #include <!\P5BoardGame\scripts\setup>
 
@@ -35,7 +36,7 @@ end
 function processSaveState(save_state)
   if (save_state ~= nil and save_state ~= '') then
     local restored_settings = JSON.decode(save_state)
-    if (restored_settings.cache_key == cache_key) then
+    if (cache_key ~= nil and restored_settings.cache_key == cache_key) then
       Settings._current_settings = restored_settings.settings
       return true
     end

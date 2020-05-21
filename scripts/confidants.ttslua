@@ -1,23 +1,23 @@
-Confidant = {}
+Confidants = {}
 
 local _deck_zone = nil
 
-function Confidant:getDeckZone()
+function Confidants:getDeckZone()
   if _deck_zone == nil then
     _deck_zone = getObjectFromGUID(CONFIDANT_CARDS_GUID)
   end
   return _deck_zone
 end
 
-function Confidant:getDeck()
+function Confidants:getDeck()
   return Zone:getDeckOrCard(self:getDeckZone())
 end
 
-function Confidant:shuffle()
+function Confidants:shuffle()
   self:getDeck():shuffle()
 end
 
-function Confidant:takeFromDeck(character_id, options)
+function Confidants:takeFromDeck(character_id, options)
   local deck = self:getDeck()
   for i, v in ipairs(deck.getObjects()) do
     if v.gm_notes == character_id then
@@ -27,7 +27,7 @@ function Confidant:takeFromDeck(character_id, options)
   return nil
 end
 
-function Confidant:removeFromDeck(character_id)
+function Confidants:removeFromDeck(character_id)
   local item_to_remove = self:takeFromDeck(character_id)
   if item_to_remove ~= nil then
       Bags:getTrashBag().putObject(item_to_remove)
@@ -35,7 +35,7 @@ function Confidant:removeFromDeck(character_id)
   return item_to_remove
 end
 
-function Confidant:revealToLocation(location_obj)
+function Confidants:revealToLocation(location_obj)
   return self:getDeck().takeObject({
     index = 0,
     flip = true,
@@ -43,8 +43,8 @@ function Confidant:revealToLocation(location_obj)
   })
 end
 
-function Confidant:prepareDeck()
-  function _co_confidant_prepareDeck()
+function Confidants:prepareDeck()
+  function _co_confidants_prepareDeck()
     Util:waitSec(0.75)
 
     for k, v in pairs(Settings:getConfiguredPlayers()) do
@@ -79,5 +79,5 @@ function Confidant:prepareDeck()
 
     return 1
   end
-  startLuaCoroutine(Global, '_co_confidant_prepareDeck')
+  startLuaCoroutine(Global, '_co_confidants_prepareDeck')
 end

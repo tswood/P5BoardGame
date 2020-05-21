@@ -16,6 +16,3 @@ end
 function Locations:shuffle()
   self:getDeck():shuffle()
 end
-
-function Locations:revealToLocation(location_obj)
-end

@@ -32,6 +32,8 @@ function Palace:initPalace(palace_id)
 
     self:getShadowDeck().shuffle()
     self:revealShadows(2 * Settings:getPlayerCount())
+    Calendar:init()
+    Message:gameNotice('Time to steal ' .. NAME.PALACE[palace_id] .. '\'s heart!')
     return 1
   end
   startLuaCoroutine(Global, '_co_palace_initPalace')

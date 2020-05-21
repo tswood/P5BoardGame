@@ -20,18 +20,26 @@ function Util:deepcopy(orig)
   return copy
 end
 
-function Util:wait_frame(frames)
+function Util:waitFrame(frames)
   for i = 1, frames do
     coroutine.yield(0)
   end
 end
 
-function Util:wait_spawning(control)
+function Util:waitSpawning(control)
   while control.spawning do coroutine.yield(0) end
 end
 
-function Util:wait_sec(time_delay)
+function Util:waitSec(time_delay)
   delay_time = delay_time or 1
   local start = os.time()
   repeat coroutine.yield(0) until os.time() > start + delay_time
+end
+
+function Util:getTableCount(table_obj)
+  local counter = 0
+  for k, v in pairs(table_obj) do
+    counter = counter + 1
+  end
+  return counter
 end

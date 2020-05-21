@@ -1,63 +1,21 @@
 --[[ Lua code. See documentation: https://api.tabletopsimulator.com/ --]]
-#include !\P5BoardGame\scripts\_guids
-#include !\P5BoardGame\scripts\_constants
-#include !\P5BoardGame\scripts\util
-#include !\P5BoardGame\scripts\message
-#include !\P5BoardGame\scripts\container
-#include !\P5BoardGame\scripts\zone
-#include !\P5BoardGame\scripts\button
-#include !\P5BoardGame\scripts\board
-#include !\P5BoardGame\scripts\settings
-#include !\P5BoardGame\scripts\save
-#include !\P5BoardGame\scripts\setup
-#include !\P5BoardGame\scripts\player_utils
-#include !\P5BoardGame\scripts\confidant
-#include !\P5BoardGame\scripts\setup_2_confidants
-#include !\P5BoardGame\scripts\setup_3_palaces
-#include !\P5BoardGame\scripts\setup_4_boardprep
-
--- Bag Ref's
-inf_hp_bag = nil
-inf_sp_bag = nil
-inf_bullet_bag = nil
-inf_cash_bag = nil
-player_card_bag = nil
-palace_card_bag = nil
-trash_bag = nil
-
--- Game State Settings
-cache_key = 'asda5aasdasdsd4'
-settings = nil
-defaultSettings = {
-  players = {},
-  open_player_cards = {}
-}
+#include <!\P5BoardGame\scripts\_constants>
+#include <!\P5BoardGame\scripts\util>
+#include <!\P5BoardGame\scripts\container>
+#include <!\P5BoardGame\scripts\board>
+#include <!\P5BoardGame\scripts\message>
+#include <!\P5BoardGame\scripts\button>
+#include <!\P5BoardGame\scripts\settings>
+#include <!\P5BoardGame\scripts\bags>
+#include <!\P5BoardGame\scripts\zone>
+#include <!\P5BoardGame\scripts\confidant>
+#include <!\P5BoardGame\scripts\palace>
+#include <!\P5BoardGame\scripts\setup>
 
 function onLoad(save_state)
-  registerBags()
-
-  if (processSaveState(save_state)) then
-    return
-  end
-
-  Setup:init()
+  Setup:initPlayerChoice()
 end
 
 function onSave()
   return nil
-  --if (settings == nil) then
-  --  return nil
-  --end
-  --settings.cache_key = cache_key
-  --return JSON.encode(settings)
-end
-
-function registerBags()
-  inf_hp_bag = getObjectFromGUID(INF_BAG_HP_GUID)
-  inf_sp_bag = getObjectFromGUID(INF_BAG_SP_GUID)
-  inf_bullet_bag = getObjectFromGUID(INF_BAG_BULLET_GUID)
-  inf_cash_bag = getObjectFromGUID(INF_BAG_CASH_GUID)
-  player_card_bag = getObjectFromGUID(PLAYER_CARD_BAG_GUID)
-  palace_card_bag = getObjectFromGUID(PALACE_CARD_BAG_GUID)
-  trash_bag = getObjectFromGUID(TRASH_BAG_GUID)
 end

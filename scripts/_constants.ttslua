@@ -1,3 +1,45 @@
+-- Version
+CUR_VER = 0.1
+
+-- Zone GUIDs
+PLAYER_1_BUTTONS_GUID = '7f6297'
+PLAYER_2_BUTTONS_GUID = 'b85b24'
+PLAYER_1_CARD_GUID = '1a4dc2'
+PLAYER_2_CARD_GUID = 'abd102'
+SHADOW_CARDS_GUID = 'b303f5'
+PALACE_CARD_GUID = '7b838d'
+LOCATION_CARDS_GUID = '0e66ae'
+CONFIDANT_CARDS_GUID = '8bdaf9'
+
+-- Pawn GUIDs
+PLAYER_PAWN_RED_GUID = 'b44b7a'
+PLAYER_PAWN_BLACK_GUID = '760161'
+
+-- Calendar GUIDs
+DAY_MARKER_GUID = 'a483cb'
+
+-- Dice GUIDs
+STAT_DIE_BASE_GUID = 'd4c756'
+
+-- Bag GUIDs
+INF_BAG_HP_GUID = 'f40a83'
+INF_BAG_SP_GUID = 'af363f'
+INF_BAG_BULLET_GUID = '913718'
+INF_BAG_CASH_GUID = '4909e2'
+CHARACTER_CARD_BAG_GUID = '69375f'
+PALACE_CARD_BAG_GUID = '9df459'
+TRASH_BAG_GUID = '865fde'
+
+-- Set Location GUIDs
+LOC_SHUJIN_GUID = '78a3c2'
+LOC_CLINIC_GUID = 'ff2baf'
+LOC_AIRSOFT_GUID = '07554e'
+LOC_CAFE_GUID = 'ae958b'
+LOC_STORE_GUID = 'd4dfe1'
+
+-- Palace GUIDs
+PALACE_COVER_GUID = 'bb0852'
+
 -- Positions
 PLAYER_CARDS_POS_REF = { [1] = PLAYER_1_CARD_GUID, [2] = PLAYER_2_CARD_GUID }
 LOC_CARD_TOP_CENTER_POS = { x = 0, y = 1, z = 22 }
@@ -12,7 +54,7 @@ PLAYER_CARD_BULLET_DROP_OFFSET = vector(3, 0.5, -9)
 PLAYER_CARD_CASH_DROP_OFFSET = vector(9, 0.5, -9)
 PLAYER_CARD_CONFIDANT_DROP_OFFSET = vector(-15, 0.5, 0)
 PLAYER_CARD_CONFIDANT_DROP_PADDING_OFFSET = vector(1.5, 0, 1.5)
-PALACE_COVER_SHADOW_DROP_OFFSET = vector(3, 1, -5)
+PALACE_COVER_SHADOW_DROP_OFFSET = vector(-3, 1, -11)
 
 -- IDs
 ID = {
@@ -25,6 +67,12 @@ ID = {
     QUEEN = 'QUEEN',
     NOIR =  'NOIR',
     CROW = 'CROW'
+  },
+  PALACE = {
+    KAMOSHIDA = 'KAMOSHIDA',
+    MADARAME = 'MADARAME',
+    KANESHIRO = 'KANESHIRO',
+    OKUMURA = 'OKUMURA'
   },
   LOC = {
     SHUJIN = 'SHUJIN',
@@ -60,6 +108,12 @@ NAME = {
     [ID.CHAR.NOIR] = 'Noir',
     [ID.CHAR.CROW] = 'Crow'
   },
+  PALACE = {
+    [ID.PALACE.KAMOSHIDA] = 'Kamoshida',
+    [ID.PALACE.MADARAME] = 'Madarame',
+    [ID.PALACE.KANESHIRO] = 'Kaneshiro',
+    [ID.PALACE.OKUMURA] = 'Okumura'
+  },
   LOC = {
     [ID.LOC.SHUJIN] = 'Shujin Academy',
     [ID.LOC.LEBLANC] = 'Cafe Leblanc',
@@ -71,19 +125,51 @@ NAME = {
 
 -- Token Definitions
 TOKEN_DEF = {
-  [ID.TOKEN.HP] = { text = "HP", offset = PLAYER_CARD_HP_DROP_OFFSET, source_guid = INF_BAG_HP_GUID },
-  [ID.TOKEN.SP] = { text = "SP", offset = PLAYER_CARD_SP_DROP_OFFSET, source_guid = INF_BAG_SP_GUID },
-  [ID.TOKEN.BULLET] = { text = "Bullet(s)", offset = PLAYER_CARD_BULLET_DROP_OFFSET, source_guid = INF_BAG_BULLET_GUID },
-  [ID.TOKEN.CASH] = { text = "Cash", offset = PLAYER_CARD_CASH_DROP_OFFSET, source_guid = INF_BAG_CASH_GUID }
+  [ID.TOKEN.HP] = {
+    text = "HP",
+    offset = PLAYER_CARD_HP_DROP_OFFSET,
+    source_guid = INF_BAG_HP_GUID
+  },
+  [ID.TOKEN.SP] = {
+    text = "SP",
+    offset = PLAYER_CARD_SP_DROP_OFFSET,
+    source_guid = INF_BAG_SP_GUID
+  },
+  [ID.TOKEN.BULLET] = {
+    text = "Bullet(s)",
+    offset = PLAYER_CARD_BULLET_DROP_OFFSET,
+    source_guid = INF_BAG_BULLET_GUID
+  },
+  [ID.TOKEN.CASH] = {
+    text = "Cash",
+    offset = PLAYER_CARD_CASH_DROP_OFFSET,
+    source_guid = INF_BAG_CASH_GUID
+  }
 }
 
 -- Stat Definitions
+-- snap_offsets are z, y, -x
 STAT_DEF = {
-  [ID.STAT.INT] = { text = "Intelligence", offset = vector(8.5, 0.15, 0.6) },
-  [ID.STAT.GUT] = { text = "Guts", offset = vector(9.8, 0.15, -1.8) },
-  [ID.STAT.PRO] = { text = "Proficency", offset = vector(7.9, 0.15, -5) },
-  [ID.STAT.KND] = { text = "Kindness", offset = vector(1.3, 0.15, -3.8) },
-  [ID.STAT.CHM] = { text = "Charm", offset = vector(1.1, 0.15, -0.7) }
+  [ID.STAT.INT] = {
+    text = "Intelligence",
+    card_offset = vector(8.4, 0.15, 0.6)
+  },
+  [ID.STAT.GUT] = {
+    text = "Guts",
+    card_offset = vector(9.5, 0.15, -1.8)
+  },
+  [ID.STAT.PRO] = {
+    text = "Proficency",
+    card_offset = vector(7.7, 0.15, -5)
+  },
+  [ID.STAT.KND] = {
+    text = "Kindness",
+    card_offset = vector(1.3, 0.15, -3.8)
+  },
+  [ID.STAT.CHM] = {
+    text = "Charm",
+    card_offset = vector(1.1, 0.15, -0.7)
+  }
 }
 
 -- Character Token/Stat Definitions
@@ -169,3 +255,7 @@ CHARACTER_DEF = {
     }
   }
 }
+
+function Vector:zero()
+  return vector(0, 0, 0)
+end

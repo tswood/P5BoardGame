@@ -1,14 +1,16 @@
 Settings = {
-  _current_settings = nil,
-  _default_settings = {
-    player_count = 0,
-    players = {},
-    open_player_cards = {}
-  }
+  _current_settings = nil
+}
+
+local _default_settings = {
+  player_count = 0,
+  palace_card_guid = nil,
+  players = {},
+  open_player_cards = {}
 }
 
 function Settings:init()
-  self._current_settings = Util:deepcopy(self._default_settings)
+  self._current_settings = Util:deepcopy(_default_settings)
   return self
 end
 
@@ -19,4 +21,148 @@ end
 
 function Settings:getPlayerCount()
   return self._current_settings.player_count
+end
+
+function Settings:getConfiguredPlayers()
+  return self._current_settings.players
+end
+
+function Settings:getConfiguredPlayerCount()
+  return Util:getTableCount(self:getConfiguredPlayers())
+end
+
+function Settings:isPlayerConfigured(player_color)
+  return self._current_settings.players[player_color] ~= nil
+end
+
+function Settings:assignPlayerCharacter(player_color, character_card)
+  local character_id = character_card.getGMNotes()
+  local player_obj = {
+    character_id = character_id,
+    character_name = NAME.CHAR[character_id],
+    character_card_guid = character_card.getGUID(),
+    player_name = Player[player_color].steam_name,
+    player_number = self:getConfiguredPlayerCount() + 1,
+    stats = {},
+    tokens = {}
+  }
+
+  self._current_settings.players[player_color] = player_obj
+
+  return player_obj
+end
+
+function Settings:getPlayerObject(player_color)
+  return self._current_settings.players[player_color]
+end
+
+function Settings:getPlayerCharacterCard(player_color)
+  return getObjectFromGUID(self:getPlayerObject(player_color).character_card_guid)
+end
+
+function Settings:assignPalaceCard(palace_card)
+  self._current_settings.palace_card_guid = palace_card.getGUID()
+end
+
+function Settings:initPlayerCharacterStats(player_color)
+  function _co_settings_initPlayerCharacterStats()
+    Util:waitSec(0.75)
+    local card = self:getPlayerCharacterCard(player_color)
+    local player_obj = self:getPlayerObject(player_color)
+    local card_pos = card.getPosition()
+    local stat_die = getObjectFromGUID(STAT_DIE_BASE_GUID)
+    local snap_points = {}
+    local rotation = Vector:zero()
+
+    for s, d in pairs(STAT_DEF) do
+      table.insert(snap_points, {
+        position = card.positionToLocal(d.card_offset + card_pos),
+        rotation = rotation,
+        rotation_snap = true
+      })
+
+      local new_die = stat_die.clone({
+        position = card_pos + d.card_offset
+      })
+
+      new_die.setName(d.text)
+
+      Util:waitSpawning(new_die)
+
+      local stat_value = CHARACTER_DEF[player_obj.character_id].stats[s]
+
+      player_obj.stats[s] = {
+        value = stat_value,
+        die_guid = new_die.getGUID()
+      }
+
+      new_die.setValue(CHARACTER_DEF[player_obj.character_id].stats[s])
+    end
+
+    card.setSnapPoints(snap_points)
+    card.setLock(true)
+    return 1
+  end
+  startLuaCoroutine(Global, '_co_settings_initPlayerCharacterStats')
+end
+
+function Settings:initPlayerCharacterTokens(player_color)
+  function _co_settings_initPlayerCharacterTokens()
+    Util:waitSec(0.75)
+    local character_id = self:getPlayerObject(player_color).character_id
+    for k, v in pairs(CHARACTER_DEF[character_id].tokens) do
+      self:givePlayerToken(player_color, k, v)
+    end
+
+    if self:getPlayerCount() == 1 then
+      self:givePlayerToken(player_color, ID.TOKEN.HP)
+      self:givePlayerToken(player_color, ID.TOKEN.SP)
+      self:givePlayerToken(player_color, ID.TOKEN.BULLET)
+      self:givePlayerToken(player_color, ID.TOKEN.CASH)
+    end
+    return 1
+  end
+  startLuaCoroutine(Global, '_co_settings_initPlayerCharacterTokens')
+end
+
+function Settings:givePlayerToken(player_color, token_id, quantity)
+  function _co_settings_givePlayerToken()
+    local token = TOKEN_DEF[token_id]
+    local playerTokens = self:getPlayerObject(player_color).tokens
+    local cardPos = self:getPlayerCharacterCard(player_color).getPosition()
+    local sourceBag = getObjectFromGUID(token.source_guid)
+
+    local rotation = token_id == ID.TOKEN.CASH
+      and vector(180, 0, 180)
+      or vector(180, 0, 0)
+
+    if playerTokens[token_id] == nil then
+      playerTokens[token_id] = 0
+    end
+
+    for i = 1, (quantity or 1) do
+      playerTokens[token_id] = playerTokens[token_id] + 1
+      local newToken = sourceBag.takeObject({
+        rotation = rotation,
+        position = cardPos + token.offset
+      })
+      Util:waitSpawning(newToken)
+    end
+
+    Message:gameNotice(self:getPlayerObject(player_color).character_name .. ' gained ' .. (quantity or 1) .. ' ' .. token.text .. '!')
+    return 1
+  end
+  startLuaCoroutine(Global, '_co_settings_givePlayerToken')
+end
+
+function Settings:initPlayerJoker(k)
+
+end
+
+function getPlayerStatDie(player_color, stat)
+  return getObjectFromGUID(getPlayerObject(player_color).stats[stat].die_guid)
+end
+
+function setPlayerStat(player_color, stat, value)
+  getPlayerStatDie(player_color, stat).setValue(value)
 end

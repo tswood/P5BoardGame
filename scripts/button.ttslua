@@ -1,15 +1,15 @@
-Button = {
-  _default_options = {
-    function_owner = nil,
-    rotation = vector(0, 180, 0),
-    width = 400,
-    height = 100,
-    font_size = 50
-  }
+Button = {}
+
+local _default_options = {
+  function_owner = nil,
+  rotation = vector(0, 180, 0),
+  width = 400,
+  height = 100,
+  font_size = 50
 }
 
 function Button:addTo(target_obj, button_options)
   return target_obj.createButton(
-    Util:merge(button_options,
-      Util:merge(self._default_options, {})))
+    Util:merge(button_options or {},
+      Util:merge(_default_options, {})))
 end

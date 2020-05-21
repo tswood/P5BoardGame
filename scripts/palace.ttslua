@@ -1,0 +1,71 @@
+Palace = {}
+
+local _shadow_card_zone = nil
+local _palace_card_zone = nil
+local _palace_cover = nil
+
+local function getPalaceCardZone()
+  if _palace_card_zone == nil then
+    _palace_card_zone = getObjectFromGUID(PALACE_CARD_GUID)
+  end
+  return _palace_card_zone
+end
+
+function Palace:initPalace(palace_id)
+  Board:clearPlayerButtons()
+
+  function _co_palace_initPalace()
+    local palace_bag = Bags:getPalaceBag()
+    local palace_card = palace_bag.takeObject({
+      index = Container:getIndexViaNotes(palace_bag, NAME.PALACE[palace_id]),
+      rotation = vector(0, 180, -180),
+      position = getPalaceCardZone().getPosition() + vector(0, -2, -1)
+    })
+
+    Util:waitSpawning(palace_card)
+
+    local cover = self.getCover()
+    local cover_pos = cover.getPosition()
+    self:getCover().setPositionSmooth(vector(cover_pos.x, 6, cover_pos.z), false, false)
+
+    Settings:assignPalaceCard(palace_card)
+
+    self:getShadowDeck().shuffle()
+    self:revealShadows(2 * Settings:getPlayerCount())
+    return 1
+  end
+  startLuaCoroutine(Global, '_co_palace_initPalace')
+end
+
+function Palace:getShadowDeck()
+  if _shadow_card_zone == nil then
+    _shadow_card_zone = getObjectFromGUID(SHADOW_CARDS_GUID)
+  end
+  return Zone:getDeckOrCard(_shadow_card_zone)
+end
+
+function Palace:getCover()
+  if _palace_cover == nil then
+    _palace_cover = getObjectFromGUID(PALACE_COVER_GUID)
+  end
+  return _palace_cover
+end
+
+function Palace:revealShadows(quantity)
+  local cover_pos = self:getCover().getPosition()
+  local shadows = self:getShadowDeck()
+
+  local row_multiplier = 0
+  for i = 1, quantity do
+    local isEven = i % 2 == 0
+    local offset_transform = vector(isEven and -1 or 1, 1, 1 + row_multiplier * 0.8)
+    local current_offset = PALACE_COVER_SHADOW_DROP_OFFSET * offset_transform
+    shadows.takeObject({
+      flip = true,
+      position = cover_pos + current_offset
+    })
+    if isEven then
+      row_multiplier = row_multiplier + 1
+    end
+  end
+end

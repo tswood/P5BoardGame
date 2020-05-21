@@ -1,32 +1,79 @@
-Confidant = {
-  deck_zone = nil
-}
+Confidant = {}
+
+local _deck_zone = nil
 
 function Confidant:getDeckZone()
-  if deck_zone == nil then
-    deck_zone = getObjectFromGUID(CONFIDANT_CARDS_GUID)
+  if _deck_zone == nil then
+    _deck_zone = getObjectFromGUID(CONFIDANT_CARDS_GUID)
   end
-  return deck_zone
+  return _deck_zone
 end
 
 function Confidant:getDeck()
   return Zone:getDeckOrCard(self:getDeckZone())
 end
 
-function Confidant:takeFromDeck(character_id)
+function Confidant:shuffle()
+  self:getDeck():shuffle()
+end
+
+function Confidant:takeFromDeck(character_id, options)
   local deck = self:getDeck()
   for i, v in ipairs(deck.getObjects()) do
     if v.gm_notes == character_id then
-      return deck.takeObject({ index = i - 1 })
+      return deck.takeObject(Util:merge(options or {}, { index = i - 1 }))
     end
   end
   return nil
 end
 
 function Confidant:removeFromDeck(character_id)
-  local itemToRemove = self:takeFromDeck(character_id)
-  if itemToRemove ~= nil then
-      trash_bag.putObject(itemToRemove)
+  local item_to_remove = self:takeFromDeck(character_id)
+  if item_to_remove ~= nil then
+      Bags:getTrashBag().putObject(item_to_remove)
   end
-  return itemToRemove
+  return item_to_remove
+end
+
+function Confidant:prepareDeck()
+  function _co_confidant_prepareDeck()
+    Util:waitSec(0.75)
+
+    for k, v in pairs(Settings:getConfiguredPlayers()) do
+      local player_number = v.player_number
+      local character_id = v.character_id
+      local target_offset = PLAYER_CARD_CONFIDANT_DROP_OFFSET +
+                            Settings:getPlayerCharacterCard(k).getPosition()
+
+      if character_id ~= ID.CHAR.JOKER then
+        while self:removeFromDeck(character_id) ~= nil do end
+      end
+
+      if (player_number == 2) then
+        target_offset = target_offset * vector(-1, 1, 1)
+      end
+
+      local take_offset = vector(0, 0, 0)
+      local options = { rotation = vector(0, 180, 0) }
+      local confidant = self:takeFromDeck(character_id, options)
+      while confidant ~= nil do
+        confidant.setPositionSmooth(target_offset + take_offset, false, true)
+        Util:waitSpawning(confidant)
+
+        if (player_number == 1) then
+          take_offset:sub(PLAYER_CARD_CONFIDANT_DROP_PADDING_OFFSET)
+        else
+          take_offset:add(PLAYER_CARD_CONFIDANT_DROP_PADDING_OFFSET)
+        end
+
+        confidant = self:takeFromDeck(character_id, options)
+      end
+    end
+
+    while self:removeFromDeck(ID.CHAR.JOKER) do end
+    self:shuffle()
+
+    return 1
+  end
+  startLuaCoroutine(Global, '_co_confidant_prepareDeck')
 end

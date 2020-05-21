@@ -1,7 +1,7 @@
-Board = {
-  _player_1_button_zone = nil,
-  _player_2_button_zone = nil
-}
+Board = {}
+
+local _player_1_button_zone = nil
+local _player_2_button_zone = nil
 
 function Board:getPlayerOneButtonZone()
   if (_player_1_button_zone == nil) then

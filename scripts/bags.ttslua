@@ -1,0 +1,33 @@
+Bags = {}
+
+local _trash_bag = nil
+local _character_bag = nil
+local _palace_bag = nil
+local _token_bags = {}
+
+function Bags:getTokenBag(token_id)
+  if _token_bags[token_id] == nil then
+    _token_bags[token_id] = getObjectFromGUID(TOKEN_DEF[token_id].source_guid)
+  end
+end
+
+function Bags:getTrashBag()
+  if _trash_bag == nil then
+    _trash_bag = getObjectFromGUID(TRASH_BAG_GUID)
+  end
+  return _trash_bag
+end
+
+function Bags:getCharacterBag()
+  if _character_bag == nil then
+    _character_bag = getObjectFromGUID(CHARACTER_CARD_BAG_GUID)
+  end
+  return _character_bag
+end
+
+function Bags:getPalaceBag()
+  if _palace_bag == nil then
+    _palace_bag = getObjectFromGUID(PALACE_CARD_BAG_GUID)
+  end
+  return _palace_bag
+end

@@ -1,12 +1,12 @@
-Setup = {}
+Setup = {
+  _available_character_cards = {}
+}
 
-function Setup:init()
-  for _, v in ipairs(Board:getPlayerButtonZones()) do
-    self:populateZoneForPlayerModeSelection(v)
-  end
-end
+local function populateZoneForPlayerModeSelection(zone_obj)
+  function _setup_setOnePlayerMode() Setup:setPlayers(1) end
+  function _setup_setTwoPlayerMode() Setup:setPlayers(2) end
+  function _setup_setManualMode() Setup:setPlayers(0) end
 
-function Setup:populateZoneForPlayerModeSelection(zone_obj)
   local button_pos = vector(0, -0.25, 0.35)
   Button:addTo(zone_obj, {
     label = 'One Player',
@@ -21,28 +21,70 @@ function Setup:populateZoneForPlayerModeSelection(zone_obj)
     function_owner = nil,
     position = button_pos:sub(vector(0, 0, 0.3))
   })
+
+  Button:addTo(zone_obj, {
+    label = "No Scripting",
+    click_function = '_setup_setManualMode',
+    function_own = nil,
+    position = button_pos:sub(vector(0, 0, 0.6))
+  })
 end
 
-function _setup_setOnePlayerMode()
-  Message:game_notice('One Player Mode')
-  Setup:setPlayers(1)
+local function populateZoneForPalaceSelection(zone_obj)
+  function _setup_setPalaceToKamoshida() Palace:initPalace(ID.PALACE.KAMOSHIDA) end
+  function _setup_setPalaceToMadarame() Palace:initPalace(ID.PALACE.MADARAME) end
+  function _setup_setPalaceToKaneshiro() Palace:initPalace(ID.PALACE.KANESHIRO) end
+  function _setup_setPalaceToOkumura() Palace:initPalace(ID.PALACE.OKUMURA) end
+
+  local z_pos = 0.35
+  for k, v in ipairs(Bags:getPalaceBag().getObjects()) do
+    local palace_name = v.gm_notes
+    Button:addTo(zone_obj, {
+      label = palace_name,
+      click_function = '_setup_setPalaceTo' .. palace_name,
+      position = vector(0, -0.25, z_pos)
+    })
+    z_pos = z_pos - 0.30
+  end
 end
 
-function _setup_setTwoPlayerMode()
-  Message:game_notice('Two Player Mode')
-  Setup:setPlayers(2)
+function Setup:initPlayerChoice()
+  Message:gameNotice('Player Mode Selection')
+  for _, v in ipairs(Board:getPlayerButtonZones()) do
+    populateZoneForPlayerModeSelection(v)
+  end
+end
+
+function Setup:initPalaceChoice()
+  Message:gameNotice('Target Palace Selection')
+  for _, v in ipairs(Board:getPlayerButtonZones()) do
+    populateZoneForPalaceSelection(v)
+  end
 end
 
 function Setup:setPlayers(player_count)
   Board:clearPlayerButtons()
   Settings:init():setPlayerCount(player_count)
+
+  if player_count == 0 then
+    Message:gameNotice('Scripting Disabled')
+    return
+  end
+
+  local mode = player_count == 1 and 'One' or 'Two'
+  Message:gameNotice(mode .. ' Player Mode')
   startLuaCoroutine(Global, '_setup_populateCharacterChoices')
+end
+
+function Setup:displayPlayerCharacterSelectMessage()
+  Message:gameNotice('Player ' .. Settings:getConfiguredPlayerCount() + 1 .. ' Character Select')
 end
 
 function _setup_populateCharacterChoices()
   local counter = 0
-  while (Container:isNotEmpty(player_card_bag)) do
-    local card = player_card_bag.takeObject({
+  local character_bag = Bags:getCharacterBag()
+  while (Container:isNotEmpty(character_bag)) do
+    local card = character_bag.takeObject({
       position = PLAYER_CARD_INIT_DISPLAY_OFFSET +
                  PLAYER_CARD_INIT_DISPLAY_PADDING * counter
     })
@@ -57,13 +99,58 @@ function _setup_populateCharacterChoices()
       position = PLAYER_CARD_INIT_BUTTON_OFFSET
     })
 
-    Util:wait_spawning(card)
+    Util:waitSpawning(card)
+    Setup._available_character_cards[character_id] = card.getGUID()
     counter = counter + 1
   end
 
-  Message:game_notice('Player 1 Character Select')
+  Setup:displayPlayerCharacterSelectMessage()
   return 1
 end
 
 function _setup_setPlayerCharacter(card_obj, player_color)
+  if Settings:isPlayerConfigured(player_color) then
+    return
+  end
+
+  local player_obj = Settings:assignPlayerCharacter(player_color, card_obj)
+  local card_drop_zone = getObjectFromGUID(PLAYER_CARDS_POS_REF[player_obj.player_number])
+
+  card_obj.clearButtons()
+  card_obj.setRotationSmooth(vector(0, -90, 0), false, true)
+  card_obj.setPositionSmooth(card_drop_zone.getPosition(), false, true)
+  card_obj.sticky = true
+
+  Setup._available_character_cards[player_obj.character_id] = nil
+
+  Message:gameNotice(player_obj.player_name .. ' donned the mask of ' .. player_obj.character_name)
+
+  if Settings:getPlayerCount() ~= Settings:getConfiguredPlayerCount() then
+    Setup:displayPlayerCharacterSelectMessage()
+  else
+    Setup:cleanupPlayerCards()
+    Confidant:prepareDeck()
+    Setup:initPalaceChoice()
+    Setup:initCharacters()
+  end
+end
+
+function Setup:cleanupPlayerCards()
+  local character_bag = Bags:getCharacterBag()
+  for k, v in pairs(self._available_character_cards) do
+    local card = getObjectFromGUID(v)
+    card.clearButtons()
+    character_bag.putObject(card)
+  end
+end
+
+function Setup:initCharacters()
+  for k, v in pairs(Settings:getConfiguredPlayers()) do
+    Settings:initPlayerCharacterStats(k)
+    Settings:initPlayerCharacterTokens(k)
+
+    if v.character_id == ID.CHAR.JOKER then
+      Settings:initPlayerJoker(k)
+    end
+  end
 end

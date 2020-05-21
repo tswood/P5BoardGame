@@ -1,0 +1,21 @@
+Locations = {}
+
+local _deck_zone = nil;
+
+function Locations:getDeckZone()
+  if _deck_zone == nil then
+    _deck_zone = getObjectFromGUID(LOCATION_CARDS_GUID)
+  end
+  return _deck_zone
+end
+
+function Locations:getDeck()
+  return Zone:getDeckOrCard(self:getDeckZone())
+end
+
+function Locations:shuffle()
+  self:getDeck():shuffle()
+end
+
+function Locations:revealToLocation(location_obj)
+end

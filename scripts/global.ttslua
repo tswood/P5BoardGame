@@ -8,6 +8,7 @@
 #include <!\P5BoardGame\scripts\settings>
 #include <!\P5BoardGame\scripts\bags>
 #include <!\P5BoardGame\scripts\zone>
+#include <!\P5BoardGame\scripts\locations>
 #include <!\P5BoardGame\scripts\confidant>
 #include <!\P5BoardGame\scripts\palace>
 #include <!\P5BoardGame\scripts\setup>

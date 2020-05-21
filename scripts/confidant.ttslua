@@ -35,6 +35,14 @@ function Confidant:removeFromDeck(character_id)
   return item_to_remove
 end
 
+function Confidant:revealToLocation(location_obj)
+  return self:getDeck().takeObject({
+    index = 0,
+    flip = true,
+    position = location_obj.getPosition() + vector(0, 0, -8)
+  })
+end
+
 function Confidant:prepareDeck()
   function _co_confidant_prepareDeck()
     Util:waitSec(0.75)
@@ -63,6 +71,11 @@ function Confidant:prepareDeck()
 
     while self:removeFromDeck(ID.CHAR.JOKER) do end
     self:shuffle()
+
+    for _, v in ipairs(FIXED_LOCATIONS) do
+      local confidant = self:revealToLocation(getObjectFromGUID(v))
+      Util:waitSpawning(confidant)
+    end
 
     return 1
   end

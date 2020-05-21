@@ -128,8 +128,8 @@ function _setup_setPlayerCharacter(card_obj, player_color)
   if Settings:getPlayerCount() ~= Settings:getConfiguredPlayerCount() then
     Setup:displayPlayerCharacterSelectMessage()
   else
-    Setup:cleanupPlayerCards()
     Confidant:prepareDeck()
+    Setup:cleanupPlayerCards()
     Setup:initPalaceChoice()
     Setup:initCharacters()
   end

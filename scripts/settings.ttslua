@@ -156,7 +156,30 @@ function Settings:givePlayerToken(player_color, token_id, quantity)
 end
 
 function Settings:initPlayerJoker(k)
+  function _co_settings_initPlayerJoker()
+    Util:waitSec(0.75)
+    local player_number = Settings:getPlayerObject(k).player_number
+    local shadow_deck = Palace:getShadowDeck()
+    local target_offset = Settings:getPlayerCharacterCard(k).getPosition() +
+                          (player_number == 1 and PLAYER_CARD_SHADOW_DROP_OFFSET or PLAYER_CARD_SHADOW_DROP_OFFSET * vector(-1, 1, 1))
 
+    shadow_deck.shuffle()
+
+    local take_offset = vector(0, 0, 0)
+    local options = { rotation = vector(0, 180, 0) }
+
+    for i = 1, 5 do
+      local card = shadow_deck.takeObject({
+        flip = true,
+        position = target_offset + take_offset
+      })
+
+      Util:waitSpawning(card)
+      take_offset:sub(DEAL_CARD_PADDING_OFFSET)
+    end
+    return 1
+  end
+  startLuaCoroutine(Global, '_co_settings_initPlayerJoker')
 end
 
 function getPlayerStatDie(player_color, stat)

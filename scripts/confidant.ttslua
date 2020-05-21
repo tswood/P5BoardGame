@@ -42,30 +42,21 @@ function Confidant:prepareDeck()
     for k, v in pairs(Settings:getConfiguredPlayers()) do
       local player_number = v.player_number
       local character_id = v.character_id
-      local target_offset = PLAYER_CARD_CONFIDANT_DROP_OFFSET +
-                            Settings:getPlayerCharacterCard(k).getPosition()
+      local target_offset = Settings:getPlayerCharacterCard(k).getPosition() +
+                            (player_number == 1 and PLAYER_CARD_CONFIDANT_DROP_OFFSET or PLAYER_CARD_CONFIDANT_DROP_OFFSET * vector(-1, 1, 1))
 
       if character_id ~= ID.CHAR.JOKER then
         while self:removeFromDeck(character_id) ~= nil do end
       end
 
-      if (player_number == 2) then
-        target_offset = target_offset * vector(-1, 1, 1)
-      end
-
       local take_offset = vector(0, 0, 0)
+      local padding_offset = vector(DEAL_CARD_PADDING_OFFSET.x, DEAL_CARD_PADDING_OFFSET.y, DEAL_CARD_PADDING_OFFSET.z + 1)
       local options = { rotation = vector(0, 180, 0) }
       local confidant = self:takeFromDeck(character_id, options)
       while confidant ~= nil do
         confidant.setPositionSmooth(target_offset + take_offset, false, true)
         Util:waitSpawning(confidant)
-
-        if (player_number == 1) then
-          take_offset:sub(PLAYER_CARD_CONFIDANT_DROP_PADDING_OFFSET)
-        else
-          take_offset:add(PLAYER_CARD_CONFIDANT_DROP_PADDING_OFFSET)
-        end
-
+        take_offset:sub(padding_offset)
         confidant = self:takeFromDeck(character_id, options)
       end
     end

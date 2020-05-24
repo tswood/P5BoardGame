@@ -5,6 +5,7 @@ Settings = {
 local _default_settings = {
   player_count = 0,
   palace_card_guid = nil,
+  current_day = 1,
   players = {},
   open_player_cards = {}
 }
@@ -44,7 +45,8 @@ function Settings:assignPlayerCharacter(player_color, character_card)
     player_name = Player[player_color].steam_name,
     player_number = self:getConfiguredPlayerCount() + 1,
     stats = {},
-    tokens = {}
+    tokens = {},
+    is_turn_done = false
   }
 
   self._current_settings.players[player_color] = player_obj
@@ -182,10 +184,9 @@ function Settings:initPlayerJoker(k)
   startLuaCoroutine(Global, '_co_settings_initPlayerJoker')
 end
 
-function getPlayerStatDie(player_color, stat)
-  return getObjectFromGUID(getPlayerObject(player_color).stats[stat].die_guid)
+function Settings:getDay()
+  return self._current_settings.current_day
 end
 
-function setPlayerStat(player_color, stat, value)
-  getPlayerStatDie(player_color, stat).setValue(value)
-end
+function Settings:setDay(day_number)
+  self._current_settings.current_day = day_number

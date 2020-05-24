@@ -13,10 +13,12 @@
 #include <!\P5BoardGame\scripts\confidants>
 #include <!\P5BoardGame\scripts\palace>
 #include <!\P5BoardGame\scripts\setup>
+#include <!\P5BoardGame\scripts\events>
 
 local cache_key = 'jniadnf95d0f'
 
 function onLoad(save_state)
+  Board:setupDrawnAreas()
   if (processSaveState(save_state)) then
     return
   end

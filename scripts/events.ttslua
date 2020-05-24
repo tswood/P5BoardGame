@@ -1,0 +1,4 @@
+Events = {}
+
+function Events:handleObjectDrop(player_color, dropped_object)
+end

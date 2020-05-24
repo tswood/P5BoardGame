@@ -29,3 +29,61 @@ function Board:clearPlayerButtons()
     v.clearButtons()
   end
 end
+
+local function addTurnButtonToObject(obj)
+  Button:addTo(obj, {
+    label = 'End Turn',
+    click_function = '_btn_EndTurnClick',
+    position = Vector:zero():add(vector(0, 0, -0.75))
+  })
+end
+
+function _btn_EndTurnClick(obj, player_color)
+  obj.clearButtons()
+  Settings:setPlayerTurnDone(player_color, true)
+  Message:gameNotice(Settings:getPlayerObject(player_color).character_name .. ' is done for the day.')
+
+  if Settings:areAllPlayersDone() then
+    Settings:setAllPlayersUndone()
+    Calendar:setDay(Settings:getDay() + 1)
+    Board:initTurnButtons()
+  end
+end
+
+function Board:initTurnButtons()
+  local zones = self:getPlayerButtonZones()
+  for _, v in pairs(Settings:getConfiguredPlayers()) do
+    local zone = zones[v.player_number]
+    zone.clearButtons()
+    addTurnButtonToObject(zone)
+  end
+end
+
+function Board:setupDrawnAreas()
+  local shadow_deck_bounds = Palace:getShadowDeck().getBounds()
+  local location_deck_bounds = Locations:getDeck().getBounds()
+  local confidant_deck_bounds = Confidants:getDeck().getBounds()
+  local palace_entrance_bounds = Util:deepcopy(location_deck_bounds)
+
+  palace_entrance_bounds.center:scale(vector(-1, 1, 1))
+
+  local bounds_for_points = {
+    shadow_deck_bounds,
+    location_deck_bounds,
+    confidant_deck_bounds,
+    palace_entrance_bounds
+  }
+
+  local points = {}
+  for _, v in pairs(bounds_for_points) do
+    table.insert(points, Util:merge(v, {
+      options = {
+        thickness = 0.075,
+        color = Color.Red,
+        padding = 0.6
+      }
+    }))
+  end
+
+  Util:drawRectangleAroundObjects(Global, points)
+end

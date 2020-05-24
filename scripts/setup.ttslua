@@ -23,7 +23,7 @@ local function populateZoneForPlayerModeSelection(zone_obj)
   })
 
   Button:addTo(zone_obj, {
-    label = "No Scripting",
+    label = 'No Scripting',
     click_function = '_setup_setManualMode',
     function_own = nil,
     position = button_pos:sub(vector(0, 0, 0.6))

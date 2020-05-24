@@ -32,18 +32,23 @@ function Palace:initPalace(palace_id)
 
     self:getShadowDeck().shuffle()
     self:revealShadows(2 * Settings:getPlayerCount())
-    Calendar:init()
+    Calendar:setDay(1)
+    Board:initTurnButtons()
     Message:gameNotice('Time to steal ' .. NAME.PALACE[palace_id] .. '\'s heart!')
     return 1
   end
   startLuaCoroutine(Global, '_co_palace_initPalace')
 end
 
-function Palace:getShadowDeck()
+function Palace:getShadowDeckZone()
   if _shadow_card_zone == nil then
     _shadow_card_zone = getObjectFromGUID(SHADOW_CARDS_GUID)
   end
-  return Zone:getDeckOrCard(_shadow_card_zone)
+  return _shadow_card_zone
+end
+
+function Palace:getShadowDeck()
+  return Zone:getDeckOrCard(self:getShadowDeckZone())
 end
 
 function Palace:getCover()

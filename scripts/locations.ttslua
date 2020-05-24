@@ -1,6 +1,6 @@
 Locations = {}
 
-local _deck_zone = nil;
+local _deck_zone = nil
 
 function Locations:getDeckZone()
   if _deck_zone == nil then

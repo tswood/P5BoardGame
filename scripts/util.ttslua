@@ -43,3 +43,40 @@ function Util:getTableCount(table_obj)
   end
   return counter
 end
+
+-- points = { ... , { center = vector(x,y,z), size = vector(x,y,z),
+-- options = { color = Color.Black, thickness = 0.5, rotation = vector(x,y,z), padding = 0 }
+-- }, ... }
+function Util:drawRectangleAroundObjects(owner_obj, points)
+  local line_options = {
+    color = Color.Black,
+    thickness = 0.5,
+    rotation = Vector:zero(),
+    padding = 0
+  }
+
+  local vector_lines = {}
+  for _, v in pairs(points) do
+    local current_options = Util:merge(line_options, {})
+    Util:merge(v.options or {}, current_options)
+
+    local top_z = v.center.z + (v.size.z / 2) + current_options.padding
+    local bottom_z = v.center.z - (v.size.z / 2) - current_options.padding
+    local left_x = v.center.x - (v.size.x / 2) - current_options.padding
+    local right_x = v.center.x + (v.size.x / 2) + current_options.padding
+
+    local line_points = {
+      { vector(left_x, 1, top_z), vector(right_x, 1, top_z) },        -- TOP
+      { vector(left_x, 1, bottom_z), vector(right_x, 1, bottom_z) },  -- BOTTOM
+      { vector(left_x, 1, top_z), vector(left_x, 1, bottom_z) },      -- LEFT
+      { vector(right_x, 1, top_z), vector(right_x, 1, bottom_z) }     -- RIGHT
+    }
+
+    for _, p in ipairs(line_points) do
+      table.insert(vector_lines, Util:merge(current_options, { points = p }))
+    end
+  end
+
+  owner_obj.setVectorLines(vector_lines)
+
+end

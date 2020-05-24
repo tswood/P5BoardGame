@@ -45,7 +45,14 @@ function _btn_EndTurnClick(obj, player_color)
 
   if Settings:areAllPlayersDone() then
     Settings:setAllPlayersUndone()
-    Calendar:setDay(Settings:getDay() + 1)
+
+    local next_day = Settings:getDay() + 1
+    if next_day == 29 then
+      Message:gameNotice('Game Over')
+      return
+    end
+
+    Calendar:setDay(next_day)
     Board:initTurnButtons()
   end
 end

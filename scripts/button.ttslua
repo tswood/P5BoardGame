@@ -5,7 +5,10 @@ local _default_options = {
   rotation = vector(0, 180, 0),
   width = 400,
   height = 100,
-  font_size = 50
+  font_size = 50,
+  color = Color.Black,
+  font_color = Color.White,
+  hover_color = Color.Red
 }
 
 function Button:addTo(target_obj, button_options)

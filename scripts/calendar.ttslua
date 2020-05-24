@@ -18,11 +18,6 @@ function Calendar:getDayMarker()
 end
 
 function Calendar:setDay(day_number)
-  if day_number == 29 then
-    Message:gameNotice('Game Over')
-    return
-  end
-
   local calendar = self:getCalendar()
   local target_snap_point = calendar.getSnapPoints()[day_number]
   local world_pos = calendar.positionToWorld(target_snap_point.position)

@@ -17,6 +17,17 @@
 
 local cache_key = 'jniadnf95d0f'
 
+local function processSaveState(save_state)
+  if (save_state ~= nil and save_state ~= '') then
+    local restored_settings = JSON.decode(save_state)
+    if (cache_key ~= nil and restored_settings.cache_key == cache_key) then
+      Settings._current_settings = restored_settings.settings
+      return true
+    end
+  end
+  return false
+end
+
 function onLoad(save_state)
   Board:setupDrawnAreas()
   if (processSaveState(save_state)) then
@@ -33,15 +44,4 @@ function onSave()
     })
   end
   return nil
-end
-
-function processSaveState(save_state)
-  if (save_state ~= nil and save_state ~= '') then
-    local restored_settings = JSON.decode(save_state)
-    if (cache_key ~= nil and restored_settings.cache_key == cache_key) then
-      Settings._current_settings = restored_settings.settings
-      return true
-    end
-  end
-  return false
 end

@@ -190,3 +190,25 @@ end
 
 function Settings:setDay(day_number)
   self._current_settings.current_day = day_number
+end
+
+function Settings:setPlayerTurnDone(player_color, flag)
+  self:getPlayerObject(player_color).is_turn_done = flag
+end
+
+function Settings:isPlayerTurnDone(player_color)
+  return self:getPlayerObject(player_color).is_turn_done
+end
+
+function Settings:areAllPlayersDone()
+  for _, v in pairs(self:getConfiguredPlayers()) do
+    if not v.is_turn_done then return false end
+  end
+  return true
+end
+
+function Settings:setAllPlayersUndone()
+  for k, v in pairs(self:getConfiguredPlayers()) do
+    self:setPlayerTurnDone(k, false)
+  end
+end

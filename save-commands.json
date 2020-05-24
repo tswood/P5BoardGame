@@ -1,5 +1,7 @@
 {
   "commands": [
-    "scripts/global.ttslua : copy {relFullPath} C:{sep}Users{sep}THEWOO~1{sep}AppData{sep}Local{sep}Temp{sep}TabletopSimulator{sep}Tablet~1{sep}Global.-1.ttslua"
+    "scripts/global.ttslua : copy {relFullPath} C:{sep}Users{sep}THEWOO~1{sep}AppData{sep}Local{sep}Temp{sep}TabletopSimulator{sep}Tablet~1{sep}Global.-1.ttslua",
+    "xml/global.xml : copy {relFullPath} C:{sep}Users{sep}THEWOO~1{sep}AppData{sep}Local{sep}Temp{sep}TabletopSimulator{sep}Tablet~1{sep}Global.-1.xml",
+    "scripts/objects/*.ttslua : copy {relFullPath} C:{sep}Users{sep}THEWOO~1{sep}AppData{sep}Local{sep}Temp{sep}TabletopSimulator{sep}Tablet~1{sep}"
   ]
 }

@@ -17,36 +17,9 @@ function Calendar:getDayMarker()
   return _marker
 end
 
-function Calendar:init()
-  local snap_points = {}
-  local rotation = Vector:zero()
-
-  local starting_x = -1.6
-  local row_multiplier = 0
-
-  for i = 1, 28 do
-    local adjusted_counter = i <= 7 and i or i - 7 * row_multiplier
-    -- Calendar is considered turned, so (z, y, x)
-    table.insert(snap_points, {
-      position = vector(-0.24 + row_multiplier * 0.33, 0, starting_x + adjusted_counter * 0.4),
-      rotation = rotation,
-      rotation_snap = true
-    })
-
-    if i % 7 == 0 then
-      row_multiplier = row_multiplier + 1
-    end
-  end
-
-  local calendar = self:getCalendar()
-
-  calendar.setSnapPoints(snap_points)
-
-  self:setDay(1)
-end
-
 function Calendar:setDay(day_number)
   local calendar = self:getCalendar()
+  Settings:setDay(day_number)
   self:getDayMarker().setPositionSmooth(calendar.positionToWorld(calendar.getSnapPoints()[day_number].position), false, true)
   Message:gameNotice('Start of Day ' .. day_number)
 end

@@ -82,6 +82,9 @@ function Util:drawRectangleAroundObjects(owner_obj, points)
 end
 
 function Util:any(source_table, func)
+  if func == nil then
+    func = function() return true end
+  end
   for _, v in pairs(source_table) do
     if func(v) then return true end
   end
@@ -110,11 +113,13 @@ function Util:indexOf(source_table, func)
   return -1
 end
 
+function Util:isArray(source_table)
+  return source_table[1] ~= nil
+end
+
 function Util:where(source_table, func)
   local results = {}
-  local is_array = source_table[1] ~= nil
-  
-  if is_array then
+  if self:isArray(source_table) then
     for i, v in ipairs(source_table) do
       if func(i, v) then table.insert(results, v) end
     end
@@ -124,5 +129,114 @@ function Util:where(source_table, func)
     end
   end
 
+  return results
+end
+
+function Util:forEach(source_table, func)
+  if self:isArray(source_table) then
+    for i, v in ipairs(source_table) do func(i, v) end
+  else
+    for k, v in pairs(source_table) do func(k, v) end
+  end
+end
+
+function Util:select(source_table, func)
+  local results = {}
+  if self:isArray(source_table) then
+    for i, v in ipairs(source_table) do results[i] = func(v) end
+  else
+    local counter = 1
+    for k, v in pairs(source_table) do
+      results[counter] = func(v)
+      counter = counter + 1
+    end
+  end
+  return results
+end
+
+function Util:asArray(source_table)
+  if self:isArray(source_table) then
+    return source_table
+  end
+
+  local results = {}
+  local counter = 1
+  for _, v in pairs(source_table) do
+    results[counter] = v
+    counter = counter + 1
+  end
+
+  return results
+end
+
+function Util:withMax(source_table, func)
+  local max_indices = {}
+  local current_max = nil
+  if self:isArray(source_table) then
+    for i, v in ipairs(source_table) do
+      local value = func(v)
+      if current_max ~= nil and current_max == value then
+        table.insert(max_indices, i)
+      end
+
+      if current_max == nil or current_max < value then
+        max_indices = { i }
+        current_max = value
+      end
+    end
+  else
+    for k, v in pairs(source_table) do
+      local value = func(v)
+      if current_max ~= nil and current_max == value then
+        table.insert(max_indices, k)
+      end
+
+      if current_max == nil or current_max < value then
+        max_indices = { k }
+        current_max = value
+      end
+    end
+  end
+
+  local results = {}
+  for k, v in pairs(max_indices) do
+    table.insert(results, source_table[v])
+  end
+  return results
+end
+
+function Util:withMin(source_table, func)
+  local min_indices = {}
+  local current_min = nil
+  if self:isArray(source_table) then
+    for i, v in ipairs(source_table) do
+      local value = func(v)
+      if current_min ~= nil and current_min == value then
+        table.insert(min_indices, i)
+      end
+
+      if current_min == nil or current_min > value then
+        min_indices = { i }
+        current_min = value
+      end
+    end
+  else
+    for k, v in pairs(source_table) do
+      local value = func(v)
+      if current_min ~= nil and current_min == value then
+        table.insert(min_indices, k)
+      end
+
+      if current_min == nil or current_min > value then
+        min_indices = { k }
+        current_min = value
+      end
+    end
+  end
+
+  local results = {}
+  for k, v in pairs(min_indices) do
+    table.insert(results, source_table[v])
+  end
   return results
 end

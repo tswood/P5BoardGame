@@ -51,7 +51,7 @@ function Util:drawRectangleAroundObjects(owner_obj, points)
   local line_options = {
     color = Color.Black,
     thickness = 0.5,
-    rotation = Vector:zero(),
+    rotation = vector(0, 0, 0),
     padding = 0
   }
 
@@ -79,4 +79,50 @@ function Util:drawRectangleAroundObjects(owner_obj, points)
 
   owner_obj.setVectorLines(vector_lines)
 
+end
+
+function Util:any(source_table, func)
+  for _, v in pairs(source_table) do
+    if func(v) then return true end
+  end
+  return false
+end
+
+function Util:all(source_table, func)
+  for _, v in pairs(source_table) do
+    if not func(v) then return false end
+  end
+  return true
+end
+
+function Util:count(source_table)
+  local counter = 0
+  for _, v in pairs(source_table) do
+    counter = counter + 1
+  end
+  return counter
+end
+
+function Util:indexOf(source_table, func)
+  for i, v in ipairs(source_table) do
+    if func(v) then return i end
+  end
+  return -1
+end
+
+function Util:where(source_table, func)
+  local results = {}
+  local is_array = source_table[1] ~= nil
+  
+  if is_array then
+    for i, v in ipairs(source_table) do
+      if func(i, v) then table.insert(results, v) end
+    end
+  else
+    for k, v in pairs(source_table) do
+      if func(k, v) then results[k] = v end
+    end
+  end
+
+  return results
 end
